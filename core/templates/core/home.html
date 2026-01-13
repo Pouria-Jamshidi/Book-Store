@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'core/layout.html' %}
+
+{% block title %}
+خانه
+{% endblock %}
+
+{% block main %}
+    این صفحه اصلی است
+    <hr>
+    <ul>
+    {% for book in books %}
+    <li class="bnazanin">{{ book }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

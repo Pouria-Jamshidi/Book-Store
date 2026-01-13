@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-# Create your views here.
+from core.models import Book
+
+
+def home(request):
+    books = Book.objects.all()
+    render(request,'home.html',{'books':books})

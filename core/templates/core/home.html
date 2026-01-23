@@ -7,9 +7,28 @@
 {% block main %}
     این صفحه اصلی است
     <hr>
+    <p>کاربر وارد شده : {{ request.user.username }}</p>
+    <h1 class="bnazanin">منو</h1>
+
+    <details>
+    <summary>منو</summary>
+
+    <details>
+        <summary>مربوط به اکانت</summary>
+        <ul dir="rtl">
+            <li><a href="{% url 'register' %}">ساخت اکانت</a> </li>
+            <li><a href="{% url 'login' %}">ورود</a> </li>
+            <li><a href="{% url 'logout' %}"><button>خروج</button></a> </li>
+        </ul>
+    </details>
+
+
+    </details>
+
+
     <ul>
     {% for book in books %}
-    <li class="bnazanin">{{ book }}</li>
+        <li class="bnazanin"><a href="{% url 'book_detail' book_id=book.id %}">{{ book }}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}

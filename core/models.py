@@ -36,7 +36,7 @@ class Book(models.Model):
     genre = models.ForeignKey(to= Genre, on_delete= models.CASCADE,related_name= 'books', verbose_name= 'ژنرا')
     author = models.ForeignKey(to= Author, on_delete= models.PROTECT,related_name= 'books', verbose_name= 'نویسنده')
     cover = models.ImageField(upload_to= imgCoverAddress, null= True, blank= True, verbose_name= 'کاور کتاب')
-    file = models.FileField(upload_to= bookFileAddress, verbose_name= 'فایل کتاب')
+    file = models.FileField(upload_to= bookFileAddress,verbose_name= 'فایل کتاب')
     created_at = models.DateTimeField(auto_now_add= True, verbose_name= 'تاریخ اضافه شدن به سایت')
     price = models.DecimalField(max_digits= 8, decimal_places=0, verbose_name= 'مبلغ')
 

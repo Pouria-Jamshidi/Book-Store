@@ -1,0 +1,13 @@
+{% extends 'core/layout.html' %}
+
+{% block title %}ثبت نام{% endblock %}
+
+{% block main %}
+    <form action="{% url 'register' %}" method="post" dir="rtl">
+    {% csrf_token %}
+    {{ register_form.as_p }}
+
+    <input type="submit" value="ثبت نام">
+    </form>
+
+{% endblock %}

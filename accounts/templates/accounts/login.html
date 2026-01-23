@@ -1,0 +1,12 @@
+{% extends 'core/layout.html' %}
+
+{% block title %}ورود{% endblock %}
+
+{% block main %}
+    <form action="{% url 'login' %}" method="post" dir="rtl">
+    {% csrf_token %}
+    {{ login_form.as_p }}
+
+    <input type="submit" value="ورود">
+    </form>
+{% endblock %}

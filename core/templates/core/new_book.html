@@ -1,0 +1,13 @@
+{% extends 'core/layout.html' %}
+
+{% block title %}اضافه کردن کتاب جدید{% endblock %}
+
+{% block main %}
+    <form action="{% url 'newbook' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ newBook_form.as_p }}
+
+        <input type="submit" value="ساخت کتاب">
+    </form>
+
+{% endblock %}

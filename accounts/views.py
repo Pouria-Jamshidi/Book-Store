@@ -4,7 +4,7 @@ from django.conf import settings
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from accounts.forms import Register_form, Login_form
 
 
@@ -56,7 +56,8 @@ class Login_view(LoginView):
         return super().form_invalid(form)
 
 
-def logout_view(request):
-    logout(request)
-    messages.success(request,'شما با موفقیت خارج شدید')
-    return redirect('home')
+class logout_view(LogoutView):
+
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(request,'شما با موفقیت خارج شدید')
+        return super().dispatch(request,*args,**kwargs)

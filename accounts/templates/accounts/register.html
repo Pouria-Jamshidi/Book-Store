@@ -1,13 +1,53 @@
-{% extends 'core/layout.html' %}
+{%  extends 'core/layout.html' %}
+{% load static %}
 
-{% block title %}ثبت نام{% endblock %}
+{% block title %}ساخت اکانت کاربری{% endblock %}
+
+{% block links %}
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+<link rel = 'stylesheet' href = '{% static 'css/signup_signin.css' %}'>
+{% endblock %}
 
 {% block main %}
-    <form action="{% url 'register' %}" method="post" dir="rtl">
-    {% csrf_token %}
-    {{ register_form.as_p }}
 
-    <input type="submit" value="ثبت نام">
-    </form>
+<div class="container">
+  <div class="frame2">
+    <div class="nav">
+      <ul class= "links">
+        <li class="signup-active bnazaninBold"><a class="btn">ساخت اکانت </a></li>
+        <li class="signin-inactive bnazaninBold"><a class="btn" href="{% url 'login' %}">ورود</a></li>
+      </ul>
+    </div>
+    <div>
+        <form class="form-signup" action="{% url 'register' %}" method="post" name="form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+            {% endif %}
+
+            {% for field in form %}
+            <label class="bnazaninBold">{{ field.label }}</label>
+            {{ field }}
+
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger text-danger">{{ error }}</div>
+                {% endfor %}
+            {% endif %}
+
+            {% endfor %}
+
+            <input type="submit" class="btn-signup" value="ساخت اکانت">
+        </form>
+      </div>
+
+      <div class="forgot">
+        <a href="#">Forgot your password?</a>
+      </div>
+  </div>
+
+</div>
 
 {% endblock %}

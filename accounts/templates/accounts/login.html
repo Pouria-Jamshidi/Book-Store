@@ -1,12 +1,61 @@
-{% extends 'core/layout.html' %}
+{%  extends 'core/layout.html' %}
+{% load static %}
 
 {% block title %}ورود{% endblock %}
 
-{% block main %}
-    <form action="{% url 'login' %}" method="post" dir="rtl">
-    {% csrf_token %}
-    {{ login_form.as_p }}
+{% block links %}
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+<link rel = 'stylesheet' href = '{% static 'css/signup_signin.css' %}'>
+{% endblock %}
 
-    <input type="submit" value="ورود">
-    </form>
+{% block main %}
+<div class="container">
+  <div class="frame">
+    <div class="nav">
+      <ul class= "links">
+        <li class="signin-active bnazaninBold"><a class="btn">ورود</a></li>
+        <li class="signup-inactive bnazaninBold"><a class="btn" href="{% url 'register' %}">ساخت اکانت </a></li>
+      </ul>
+    </div>
+    <div>
+        <form class="form-signin" action="{% url 'login' %}" method="post" name="form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+            {% endif %}
+
+            {% for field in form %}
+                {% if field.name == 'remember_me' %}
+                    {{ field }}
+                    <label for="checkbox" dir="ltr"><span class="ui"></span><span class="bnazaninBold">{{ field.label }}</span></label>
+                {% else %}
+                    <label class="bnazaninBold">{{ field.label }}</label>
+                    {{ field }}
+                {% endif %}
+
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger text-danger">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+
+{#            <input dir="ltr" type="checkbox" id="checkbox"/>#}
+{#            <label for="checkbox" dir="ltr"><span class="ui"></span>من را بخاطر بسپار</label>#}
+
+            <div class="btn-animate" >
+            <input class="btn-signin" type="submit" value="ورود">
+            </div>
+        </form>
+
+    </div>
+
+      <div class="forgot">
+        <a href="#">Forgot your password?</a>
+      </div>
+  </div>
+
+</div>
 {% endblock %}

@@ -5,37 +5,7 @@
 {% endblock %}
 
 
-{% block header %}
-این صفحه اصلی است
-{% endblock %}
-
 {% block main %}
-    <hr>
-    <p>کاربر وارد شده : {{ request.user.username }}</p>
-    <hr>
-    <details>
-    <summary>منو</summary>
-
-    <details>
-        <summary>مربوط به اکانت</summary>
-        <ul dir="rtl">
-            <li><a href="{% url 'register' %}">ساخت اکانت</a> </li>
-
-            <li><a href="{% url 'login' %}">ورود</a> </li>
-
-            <li>
-                <form action="{% url 'logout' %}" method = 'post'>
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger bnazaninBold">خروج</button>
-                </form>
-            </li>
-
-        </ul>
-    </details>
-
-
-    </details>
-
 
     <ul>
     {% for book in books %}

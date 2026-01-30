@@ -359,3 +359,9 @@ h1 {
 	font-weight: 300;
   text-align: center;
 }
+
+.field-ltr {
+    direction: ltr !important;       /* forces left-to-right input */
+    unicode-bidi: plaintext !important; /* ensures cursor behaves correctly */
+    text-align: left;                /* aligns text to the left */
+}

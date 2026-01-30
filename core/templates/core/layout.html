@@ -8,7 +8,9 @@
         {% endblock %}
     </title>
     <style>
+    footer {margin-top:auto}
         {% block style %}
+
         {% endblock %}
     </style>
     <!-- Bootstraps icons -->
@@ -26,19 +28,90 @@
     {% endblock %}
 </head>
 <body>
+    <div class="proper-placement"> <!-- exists to push footer down -->
     <!-- ======================== body/header ======================== -->
-    <header>
+    <header dir="rtl">
+
+    <!-- ============================================ Bootstraps nav bar ============================================ -->
         {% block header %}
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                      <a {% if request.resolver_match.url_name == 'home' %} class="nav-link active bnazaninBold" aria-current="page" {% else %} class="nav-link bnazaninBold" {% endif %} href="{% url 'home' %}">صفحه اصلی</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                    </li>
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">
+                  {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle" id="navbarDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ request.user.username }}
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a href="#" class="dropdown-item bnazaninBold">اکانت کاربری</a></li>
+
+                            <li><hr class="dropdown-divider"></li>
+                            {% if request.user.is_superuser %}
+                            <li><a href="{% url 'admin:index' %}" class="dropdown-item bnazaninBold" target="_blank">بازکردن صفحه ادمین</a> </li>
+                            <li><a href="{% url 'newbook' %}" class="dropdown-item bnazaninBold">ساخت کتاب</a></li>
+                            <li><a href="{% url 'newauthor' %}" class="dropdown-item bnazaninBold">اضافه کردن نویسنده</a> </li>
+                            <li><a href="{% url 'newgenre' %}" class="dropdown-item bnazaninBold">اضافه کردن ژانرا</a> </li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li class="d-flex justify-content-center">
+                                <form action="{% url 'logout' %}" method = 'post' class="dropdown-item">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger bnazaninBold d-flex justify-content-evenly" style="width: 100%;height: 100%"><span class="bi bi-person-dash-fill"></span>  خروج</button>
+                                </form>
+                            </li>
+                            </ul>
+                        </li>
+                  {% else %}
+                    <li><a href="{% url 'login' %}" class="btn btn-info bnazaninBold"><span class="bi bi-person-circle"></span>  ورود</a></li>
+                  {% endif %}
+                  </ul>
+                  <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                  </form>
+                </div>
+              </div>
+            </nav>
         {% endblock %}
+    <!-- ============================================ END OF : Bootstraps nav bar ============================================ -->
+
     </header>
 
     <!-- ======================== body/main ======================== -->
     <main dir="rtl">
+        <div class="bnazaninBold">
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">{{message}}</div>
             {% endfor %}
         {% endif %}
+        </div>
         {% block main %}
         {% endblock %}
     </main>
@@ -46,10 +119,23 @@
     <!-- ======================== body/footer ======================== -->
     <footer>
         {% block footer %}
+            <div style="height: 300px; background-color: rgba(72,121,149,0.76); display: flex ">
+            <div style="flex:1;">
+                <div style="padding: 3%">
+
+                </div>
+            </div>
+            <div style="flex:1; border-left:thin solid rgba(27,52,64,0.3);border-right:thin solid rgba(27,52,64,0.3)">
+
+            </div>
+            <div style="flex:1;">
+
+            </div>
+            </div>
         {% endblock %}
     </footer>
-
+    </div>
     <!-- bootstraps -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

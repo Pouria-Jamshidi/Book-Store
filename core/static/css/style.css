@@ -1,3 +1,17 @@
-textarea {
-    resize: none;
+/*exists so textarea's size can't be changed*/
+form textarea {
+    resize: none;!important
+}
+
+/*exists to push footer up and header up*/
+.proper-placement {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100dvh;
+}
+
+.field-ltr {
+    direction: ltr !important;       /* forces left-to-right input */
+    unicode-bidi: plaintext !important; /* ensures cursor behaves correctly */
+    text-align: left;                /* aligns text to the left */
 }

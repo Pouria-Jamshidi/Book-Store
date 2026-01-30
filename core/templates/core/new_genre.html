@@ -1,0 +1,40 @@
+{% extends 'core/layout.html' %}
+
+{% block title %}اضافه کردن ژانرا جدید{% endblock %}
+
+{% block main %}
+    <div class="row mt-4 p-1 d-flex justify-content-center">
+
+        <div class="col-sm-4 border border-2 p-3 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
+            <form action="{% url 'newgenre' %}" method="post" class="bnazaninBold mt-3 mb-2">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    {%  for error in form.non_field_errors %}
+                        <div class="alert alert-{{ message.tags }}">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                {% for field in form %}
+                    <div style="margin-bottom: 1%">
+
+                    <div class="input-group mb-4">
+                        <label class="input-group-text rounded-end rounded-start-0" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-{{ message.tags }}">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    </div>
+                {% endfor %}
+
+                <input type="submit" class="btn btn-primary btn-sm d-flex align-items-center w-100"
+                                            onmouseenter="this.classList.replace('btn-primary','btn-success')"
+                                            onmouseleave="this.classList.replace('btn-success','btn-primary')" value="ثبت ژانرا">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

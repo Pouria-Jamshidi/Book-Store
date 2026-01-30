@@ -18,7 +18,7 @@ class RegisterView(View):
         if form.is_valid():
             new_user = form.save()
             messages.success(request, 'اکانت شما به نام کاربری {} ساخته شد!'.format(new_user.username))
-            return redirect('home')
+            return redirect('login')
         return render(request, 'accounts/register.html', {'form': form})
 
 class Login_view(LoginView):

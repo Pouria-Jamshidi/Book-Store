@@ -3,11 +3,74 @@
 {% block title %}اضافه کردن کتاب جدید{% endblock %}
 
 {% block main %}
-    <form action="{% url 'newbook' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ newBook_form.as_p }}
 
-        <input type="submit" value="ساخت کتاب">
-    </form>
+    <div class="row mt-4 p-1 d-flex justify-content-center">
 
+        <div class="col-sm-5 border border-2 p-4 mb-5 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
+            <form action="{% url 'newbook' %}" method="post" enctype="multipart/form-data" class="bnazaninBold">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-{{ message.tags }}">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+                {% for field in form %}
+                    <div style="margin-bottom: 1%">
+                    {% if field.name == 'author' %}
+                        <div class="input-group mb-3">
+                            <label class="input-group-text rounded-end rounded-start-0" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+
+                            <a href="{% url 'newauthor' %}" class="btn btn-primary btn-sm rounded-start rounded-end-0 d-flex align-items-center" target="_blank"
+                            onmouseenter="this.classList.replace('btn-primary','btn-success')"
+                            onmouseleave="this.classList.replace('btn-success','btn-primary')">اضافه کردن نویسنده جدید</a>
+                        </div>
+
+
+                    {% elif field.name == 'genre' %}
+                        <div class="input-group mb-3">
+                            <label class="input-group-text rounded-end rounded-start-0" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+
+                            <a href="{% url 'newgenre' %}" class="btn btn-primary rounded-start rounded-end-0 d-flex align-items-center" target="_blank"
+                            onmouseenter="this.classList.replace('btn-primary','btn-success')"
+                            onmouseleave="this.classList.replace('btn-success','btn-primary')">اضافه کردن ژانرا جدید</a>
+                        </div>
+
+
+                    {% elif field.name == 'file' or field.name == 'cover' %}
+                        <div class="input-group mb-3">
+                          <label for="{{ field.id_for_label }}" class="input-group-text rounded-end rounded-start-0" >{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+
+                    {% elif field.name == 'price'%}
+                        <div class="input-group mb-3">
+                          <label for="{{ field.id_for_label }}" class="input-group-text rounded-end rounded-start-0" >{{ field.label }}</label>
+                            {{ field }}
+                          <span class="input-group-text rounded-start rounded-end-0">تومان</span>
+                        </div>
+
+                    {% else %}
+                        <div class="input-group mb-3">
+                            <label class="input-group-text rounded-end rounded-start-0" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-{{ message.tags }}">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    </div>
+                {% endfor %}
+
+                <input type="submit" class="btn btn-primary w-100" value="ایجاد"
+                onmouseenter="this.classList.replace('btn-primary','btn-success')"
+                onmouseleave="this.classList.replace('btn-success','btn-primary')">
+            </form>
+        </div>
+    </div>
 {% endblock %}

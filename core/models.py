@@ -4,14 +4,14 @@ from django.db import models
 
 # =================================================== Dynamic Addresses ===================================================
 def imgCoverAddress(instance, filename):
-    return f'book_cover/{instance.author.username}/{instance.title}/{filename}'
+    return f'book_cover/{instance.author.name}/{instance.title}/{filename}'
 
 def bookFileAddress(instance, filename):
-    return f'books_files/{instance.author.username}/{instance.title}/{filename}'
+    return f'books_files/{instance.author.name}/{instance.title}/{filename}'
 
 # ======================================================== Models ========================================================
 class Genre(models.Model):
-    name = models.CharField(max_length= 20, verbose_name= 'ژانرا')
+    name = models.CharField(max_length= 20, verbose_name= 'ژانرا',unique= True)
 
     class Meta:
         verbose_name= 'ژانرا'
@@ -33,7 +33,7 @@ class Author(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=50, verbose_name='عنوان کتاب')
     description = models.TextField(verbose_name='درباره کتاب', null= True, blank= True)
-    genre = models.ForeignKey(to= Genre, on_delete= models.CASCADE,related_name= 'books', verbose_name= 'ژنرا')
+    genre = models.ManyToManyField(to= Genre,related_name= 'books', verbose_name= 'ژنرا')
     author = models.ForeignKey(to= Author, on_delete= models.PROTECT,related_name= 'books', verbose_name= 'نویسنده')
     cover = models.ImageField(upload_to= imgCoverAddress, null= True, blank= True, verbose_name= 'کاور کتاب')
     file = models.FileField(upload_to= bookFileAddress,verbose_name= 'فایل کتاب')

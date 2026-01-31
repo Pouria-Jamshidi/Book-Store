@@ -7,12 +7,7 @@
         {% block title %}
         {% endblock %}
     </title>
-    <style>
-    footer {margin-top:auto}
-        {% block style %}
 
-        {% endblock %}
-    </style>
     <!-- Bootstraps icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <!-- bootstraps -->
@@ -23,6 +18,13 @@
     {% block links %}
     	<link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% endblock %}
+
+    <style>
+    footer {margin-top:auto}
+        {% block style %}
+
+        {% endblock %}
+    </style>
 
     {% block head %}
     {% endblock %}
@@ -125,7 +127,7 @@
     <!-- ======================== body/footer ======================== -->
     <footer>
         {% block footer %}
-            <div style="height: 300px; background-color: rgba(72,121,149,0.76); display: flex ">
+            <div style="height: 200px; background-color: rgba(72,121,149,0.76); display: flex ">
             <div style="flex:1;">
                 <div style="padding: 3%">
 

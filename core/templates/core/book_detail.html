@@ -1,8 +1,33 @@
 {% extends 'core/layout.html' %}
 
+
 {% block title %}مشخصات کتاب{% endblock %}
 
+
 {% block main %}
-    {{ book.title }}
-    {{ book.author }}
+<div class="container border-0 mt-5 mb-5 card bnazaninBold">
+<div class="row g-0 row-col-2 mt-2 mb-3 d-flex border rounded-4 justify-content-start">
+    <div class="col-4">
+        <img src="{{ book.cover.url }}" alt="{{ book.title }}" height="auto" class="w-100 rounded-end-4" >
+    </div>
+    <div class="col-8" style="display: flex; flex-direction: column">
+        <div class="card-body p-2" style="flex:85 ;display: flex; flex-direction: column;">
+            <div style="flex:10; font-size: 2.5dvmax" class="d-flex align-items-center">{{ book.title }}</div>
+            <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">نویسنده : {{ book.author }}</div>
+            <div style="flex:40;" class="border-top border-bottom border-3">
+                <p style="margin-bottom: 0.2em; font-size: 1.5dvmax">درباره کتاب :</p>
+                <p style=" font-size: 1.3dvmax" class="text-wrap">{{ book.description }}</p>
+            </div>
+            <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">قیمت : {{ book.price }} تومان</div>
+        </div>
+        <div class="card-footer p-0" style="flex:15 ;display: flex; flex-direction: column; ">
+            {% if not user.is_authenticated %}
+                <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-warning rounded-end-0 rounded-top-0 text-center d-flex align-items-center">برای خرید باید وارد شوید</a>
+            {% else %}
+                <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-info rounded-end-0 rounded-top-0 text-center d-flex align-items-center" onmouseenter="this.classList.replace('btn-info','btn-success')"  onmouseleave="this.classList.replace('btn-success','btn-info')">خرید کتاب</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
 {% endblock %}

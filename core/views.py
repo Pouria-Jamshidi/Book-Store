@@ -26,7 +26,7 @@ class NewBook(LoginRequiredMixin, UserPassesTestMixin,View):
             # data = form.cleaned_data
             # genres = data.pop('genre')
             form.save()
-            messages.success(request,'کتاب با موفقیت اضافه شد.')
+            messages.success(request,'کتاب "{}" از نویسنده "{}" با موفقیت اضافه شد.'.format(form.cleaned_data.get('title'),form.cleaned_data.get('author')))
             return redirect('newbook')
         return render(request, 'core/new_book.html',{'form':form})
 

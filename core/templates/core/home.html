@@ -1,5 +1,5 @@
 {% extends 'core/layout.html' %}
-
+{% load humanize %}
 {% block title %}
 خانه
 {% endblock %}
@@ -7,9 +7,32 @@
 
 {% block main %}
 
-    <ul>
-    {% for book in books %}
-        <li class="bnazanin"><a href="{% url 'book_detail' book_id=book.id %}">{{ book }}</a></li>
-    {% endfor %}
-    </ul>
+
+    <div class="row gx-1 row-col-4 mt-2 d-flex justify-content-start ms-4 me-4">
+        {% for book in books %}
+        <div class="col-sm-3 bnazaninBold">
+            <div class="card mb-3">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img src="{{ book.cover.url }}" class="img-fluid rounded-end h-100" alt="{{ book.title }}">
+                </div>
+                <div class="col-md-8 d-flex flex-column">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ book.title }}</h4>
+                    <h6 class="card-title">نویسنده : {{ book.author }}</h6>
+                    <hr>
+                    <p class="card-text"><small class="text-body-secondary">قیمت : {{ book.price|floatformat:0|intcomma }} تومان</small></p>
+
+                  </div>
+                    <a href="{% url 'book_detail' book_id=book.id %}" class="btn btn-info w-100 rounded-top-0 rounded-end-0">مشاهده کتاب</a>
+{#                  <div class="card-footer d-flex p-0">#}
+{#                      <a href="{% url 'book_detail' book_id=book.id %}" class="btn btn-info w-100 rounded-top-0 rounded-end-0 flex-fill">مشاهده کتاب</a>#}
+{#                  </div>#}
+                </div>
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}

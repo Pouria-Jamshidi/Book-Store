@@ -14,17 +14,58 @@
         <div class="card-body p-2" style="flex:85 ;display: flex; flex-direction: column;">
             <div style="flex:10; font-size: 2.5dvmax" class="d-flex align-items-center">{{ book.title }}</div>
             <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">نویسنده : {{ book.author }}</div>
+            <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">
+                <span style="margin-left: 2ch">امتیاز : </span>
+                <span style="margin-left: 1ch">({{ book.score_average }}/5)</span>
+                <span dir="ltr">
+                    {% for i in '12345'|make_list %}
+                    {% if i|floatformat <= book.score_average|floatformat %}
+                    ⭐
+                    {% else %}
+                    ☆
+                    {% endif %}
+                    {% endfor %}
+                </span>
+            </div>
+{#            <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">#}
+{#                <span style="margin-left: 2ch">تعداد امتیازات : </span>#}
+{#                <span>({{ vote_count }})</span>#}
+{#            </div>#}
             <div style="flex:40;" class="border-top border-bottom border-3">
                 <p style="margin-bottom: 0.2em; font-size: 1.5dvmax">درباره کتاب :</p>
                 <p style=" font-size: 1.3dvmax" class="text-wrap">{{ book.description }}</p>
             </div>
+            {% if True %}
+            <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">
+
+            <!-- =============================== STAR SCORING SYSTEM ========================= -->
+            <form action="{% url 'book_score' book_id=book.id %}" method="post" style="display: flex; flex-grow: inherit">
+                {% csrf_token %}
+
+                <label for="score" style="flex: 2">امتیاز خود را وارد کنید :</label>
+                <select class="form-select" aria-label="book score select" style="flex: 3" name="score">
+                  <option selected value="0">0 ستاره</option>
+                  <option value="1">1 ستاره</option>
+                  <option value="2">2 ستاره</option>
+                  <option value="3">3 ستاره</option>
+                  <option value="4">4 ستاره</option>
+                  <option value="5">5 ستاره</option>
+                </select>
+                <input type="submit" class="btn btn-outline-success col-sm-4" value="ثبت امتیاز" style="flex: 1;">
+            </form>
+
+            </div>
+            {% else %}
             <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">قیمت : {{ book.price }} تومان</div>
+            {% endif %}
         </div>
         <div class="card-footer p-0" style="flex:15 ;display: flex; flex-direction: column; ">
             {% if not user.is_authenticated %}
                 <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-warning rounded-end-0 rounded-top-0 text-center d-flex align-items-center">برای خرید باید وارد شوید</a>
             {% else %}
-                <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-info rounded-end-0 rounded-top-0 text-center d-flex align-items-center" onmouseenter="this.classList.replace('btn-info','btn-success')"  onmouseleave="this.classList.replace('btn-success','btn-info')">خرید کتاب</a>
+                <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-info rounded-end-0 rounded-top-0 text-center d-flex align-items-center"
+                   onmouseenter="this.classList.replace('btn-info','btn-success')"
+                   onmouseleave="this.classList.replace('btn-success','btn-info')">خرید کتاب</a>
             {% endif %}
         </div>
     </div>

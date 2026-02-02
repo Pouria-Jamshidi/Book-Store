@@ -58,8 +58,6 @@ class NewGenreForm(forms.ModelForm):
             'name':"اسم ژانرا"
         }
 
-
-
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control rounded-start rounded-end-0', 'id':'name'}),
         }

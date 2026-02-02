@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.db.models import Avg, OneToOneField
 
 
 # =================================================== Dynamic Addresses ===================================================
@@ -44,13 +44,22 @@ class Book(models.Model):
         verbose_name= 'کتاب'
         verbose_name_plural= 'کتاب'
 
+    def score_average(self):
+        """
+        returns the average score of the book
+        :return:
+        """
+        avg_score = self.scores.aggregate(ave=Avg('score')).get('ave')
+        return round(avg_score or 0,2)
+
     def __str__(self):
         return f'{self.title}'
 
 class Score(models.Model):
     book = models.ForeignKey(to= Book, on_delete= models.CASCADE,related_name= 'scores', verbose_name= 'کتاب')
-    user = models.ForeignKey(to= 'accounts.User', on_delete= models.CASCADE,related_name= 'Scores', verbose_name= 'کاربر')
+    user = models.ForeignKey(to= 'accounts.User', on_delete= models.CASCADE,related_name= 'scores', verbose_name= 'کاربر')
     score = models.PositiveSmallIntegerField(verbose_name= 'امتیاز')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ امتیاز دادن')
 
     class Meta:
         verbose_name = 'امتیاز'
@@ -59,3 +68,10 @@ class Score(models.Model):
 
     def __str__(self):
         return f'{self.book.title}, {self.user.username} = {self.score}'
+
+class NavbarGenre(models.Model):
+    position = models.PositiveSmallIntegerField(verbose_name='اولویت ژانرا')
+    genre = OneToOneField(to=Genre,on_delete=models.CASCADE, verbose_name= 'اسم ژانرا')
+
+    class Meta:
+        ordering = ['position'] #always order them based on position

@@ -3,7 +3,7 @@ from django.views import View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
-from core.models import Book
+from core.models import Book, Score
 from core.forms import NewAuthorForm, NewBookForm, NewGenreForm
 
 
@@ -13,7 +13,11 @@ def home(request):
 
 def book_detail(request,book_id):
     book = get_object_or_404(Book,pk=book_id)
+    # vote_count = book.scores.count()
+    # return render(request,'core/book_detail.html',{'book':book,'vote_count':vote_count})
     return render(request,'core/book_detail.html',{'book':book})
+
+
 
 class NewBook(LoginRequiredMixin, UserPassesTestMixin,View):
     def get(self,request):
@@ -74,7 +78,6 @@ class NewAuthorView(LoginRequiredMixin, UserPassesTestMixin,View):
             self.get_redirect_field_name(),
         )
 
-
 class NewGenreView(LoginRequiredMixin, UserPassesTestMixin,View):
     def get(self,request):
         form = NewGenreForm()
@@ -87,6 +90,7 @@ class NewGenreView(LoginRequiredMixin, UserPassesTestMixin,View):
             messages.success(request, 'ژانرا جدید ({}) با موفقیت ثبت گردید'.format(form.cleaned_data.get('name')))
             return redirect('newgenre')
         return render(request, 'core/new_genre.html',{'form':form})
+
 
     def test_func(self):
         return self.request.user.is_staff or self.request.user.is_superuser
@@ -102,3 +106,16 @@ class NewGenreView(LoginRequiredMixin, UserPassesTestMixin,View):
             self.get_login_url(),
             self.get_redirect_field_name(),
         )
+
+class BookScoreView(LoginRequiredMixin, View):
+    def get(self,request,book_id):
+        return redirect('book_detail',book_id=book_id)
+
+    def post(self,request,book_id):
+        book = get_object_or_404(Book,pk=book_id)
+        score =request.POST.get('score')
+        Score.objects.update_or_create(user=request.user,book=book, defaults={'score':score})
+        messages.success(request,'امتیاز شما با موفقیت ثبت گردید')
+        return redirect('book_detail',book_id=book_id)
+
+

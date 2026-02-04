@@ -8,19 +8,23 @@ from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm
 
 
 def home(request):
-    books = Book.objects.all()
-    navbar_items = NavbarGenre.objects.all()
-    genre = Genre.objects.all()
+
     context = {
-        'books':books,
-        'navbar_items':navbar_items,
+        'books':Book.objects.all(),
+        'navbar_items':NavbarGenre.objects.all(),
+        'active_genre': None
     }
     return render(request,'core/home.html',context)
 
 def home_genre(request,genre_id):
-    books = Book.objects.filter(genre=genre_id)
-    navbar_items = NavbarGenre.objects.all()
-    return render(request,'core/home.html',{'books':books,'navbar_items':navbar_items})
+
+    context = {
+        'books': Book.objects.filter(genre=genre_id),
+        'navbar_items': NavbarGenre.objects.all(),
+        'active_genre': genre_id
+    }
+
+    return render(request,'core/home.html',context)
 
 def book_detail(request,book_id):
     book = get_object_or_404(Book,pk=book_id)

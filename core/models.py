@@ -75,6 +75,11 @@ class NavbarGenre(models.Model):
 
     class Meta:
         ordering = ['position'] #always order them based on position
+        verbose_name = 'ژانرا نوار ناوبری'
+        verbose_name_plural = 'ژانرا نوار کاربری'
         constraints = [
             UniqueConstraint(fields=['position'], name='unique_position'),
         ]
+
+    def __str__(self):
+        return f'{self.position} = {self.genre.name}'

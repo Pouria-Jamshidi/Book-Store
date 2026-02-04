@@ -66,7 +66,7 @@ class NewGenreForm(forms.ModelForm):
 
 class NavbarForm(forms.Form):
 
-    MAX_ITEMS = 7
+    MAX_ITEMS = 14
 
     # DYNAMIC FIELD MAKING
     def __init__(self, *args, **kwargs):

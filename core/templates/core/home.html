@@ -17,7 +17,7 @@
             <li class="nav-item ms-2 rounded-pill" style="font-size: 2.5ch;background-color: rgb(145, 126, 217) "
                 onmouseenter="this.style.backgroundColor= 'rgba(90,63,204,0.23)'"
                 onmouseleave="this.style.backgroundColor= 'rgb(145, 126, 217)'">
-              <a {% if request.resolver_match.url_name == 'home_genre' %} class="nav-link active bnazaninBold" aria-current="page" {% else %} class="nav-link bnazaninBold" {% endif %} href="{% url 'home_genre' genre_id=item.genre.id %}">{{ item.genre }}</a>
+              <a {% if active_genre == item.genre.id%} class="nav-link active bnazaninBold" aria-current="page" {% else %} class="nav-link bnazaninBold" {% endif %} href="{% url 'home_genre' genre_id=item.genre.id %}">{{ item.genre }}</a>
             </li>
             {% endif %}
             {% endfor %}

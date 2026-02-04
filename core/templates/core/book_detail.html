@@ -35,7 +35,7 @@
                 <p style="margin-bottom: 0.2em; font-size: 1.5dvmax">درباره کتاب :</p>
                 <p style=" font-size: 1.3dvmax" class="text-wrap">{{ book.description }}</p>
             </div>
-            {% if True %}
+            {% if purchased %}
             <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">
 
             <!-- =============================== STAR SCORING SYSTEM ========================= -->
@@ -63,9 +63,27 @@
             {% if not user.is_authenticated %}
                 <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-warning rounded-end-0 rounded-top-0 text-center d-flex align-items-center">برای خرید باید وارد شوید</a>
             {% else %}
-                <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-info rounded-end-0 rounded-top-0 text-center d-flex align-items-center"
-                   onmouseenter="this.classList.replace('btn-info','btn-success')"
-                   onmouseleave="this.classList.replace('btn-success','btn-info')">خرید کتاب</a>
+
+                {% if in_cart %}
+                    <form action="{% url 'cart_remove' book_id=book.id %}?next={{ request.path }}" method="post" style="flex:1;">
+                    {% csrf_token %}
+                    <input type="submit" style="font-size: 2dvmax" class="btn btn-warning rounded-end-0 rounded-top-0 text-center w-100 h-100 d-flex align-items-center"
+                       onmouseenter="this.classList.replace('btn-warning','btn-danger')"
+                       onmouseleave="this.classList.replace('btn-danger','btn-warning')" value="حذف از سبد خرید">
+                    </form>
+                {% elif purchased %}
+                    <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-success rounded-end-0 rounded-top-0 text-center d-flex align-items-center"
+                   onmouseenter="this.classList.replace('btn-success','btn-info')"
+                   onmouseleave="this.classList.replace('btn-info','btn-success')">دانلود کتاب</a>
+                {% else %}
+                    <form action="{% url 'cart_add' book_id=book.id %}?next={{ request.path }}" method="post" style="flex:1;">
+                    {% csrf_token %}
+                    <input type="submit" style="font-size: 2dvmax" class="btn btn-info rounded-end-0 rounded-top-0 text-center w-100 h-100 d-flex align-items-center"
+                       onmouseenter="this.classList.replace('btn-info','btn-success')"
+                       onmouseleave="this.classList.replace('btn-success','btn-info')" value="خرید کتاب">
+                    </form>
+                {% endif %}
+
             {% endif %}
         </div>
     </div>

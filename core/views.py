@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
 from core.models import Book, Score, NavbarGenre, Genre
+from sales.models import Order, OrderItems, StatusChoices
 from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm
 
 
@@ -28,9 +29,38 @@ def home_genre(request,genre_id):
 
 def book_detail(request,book_id):
     book = get_object_or_404(Book,pk=book_id)
+
+    # ================================= Check to see if user has already purchased , show download ======================================
+    already_purchased = OrderItems.objects.filter(
+        order__user=request.user,
+        order__status=StatusChoices.PAID,
+        book=book
+    ).exists()
+    # ===================================================================================================================================
+
+    # ================================ Check to see if it is in cart , delete if from the cart ==========================================
+    def in_cart():
+        order = Order.objects.filter(
+            user=request.user,
+            status=StatusChoices.PENDING
+        ).first()
+
+        item = OrderItems.objects.filter(
+            order=order,
+            book=book
+        ).first()
+
+        return item
+    # ===================================================================================================================================
+
+    # # ============================== Counting the number of scores ==============================
     # vote_count = book.scores.count()
     # return render(request,'core/book_detail.html',{'book':book,'vote_count':vote_count})
-    return render(request,'core/book_detail.html',{'book':book})
+    # # ===========================================================================================
+
+    context = {'book':book, 'purchased': already_purchased, 'in_cart':in_cart()}
+
+    return render(request,'core/book_detail.html', context)
 
 
 

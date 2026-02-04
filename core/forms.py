@@ -1,7 +1,9 @@
+from email.policy import default
+
 from django import forms
-from core.models import Book, Author, Genre
+from core.models import Book, Author, Genre, NavbarGenre
 from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
 
 
 class NewBookForm(forms.ModelForm):
@@ -61,3 +63,36 @@ class NewGenreForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control rounded-start rounded-end-0', 'id':'name'}),
         }
+
+class NavbarForm(forms.Form):
+
+    MAX_ITEMS = 7
+
+    # DYNAMIC FIELD MAKING
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for i in range(1, self.MAX_ITEMS + 1):
+            # Genre field
+            self.fields[f'genre{i}'] = forms.ModelChoiceField(
+                queryset=Genre.objects.all(),
+                widget=forms.Select(attrs={'class': 'form-select rounded-start rounded-end-0'}),
+                required=False,
+                label= 'آیتم شماره {} نوار ناوبری'.format(i),
+            )
+
+    def clean(self):
+        cleaned = super().clean()
+
+        chosen = [
+            cleaned.get(f'genre{i}')
+            for i in range(1, self.MAX_ITEMS + 1)
+            if cleaned.get(f'genre{i}') is not None
+        ]
+
+        if len(chosen) != len(set(chosen)):
+            raise ValidationError(
+                "یک ژانر نمی‌تواند در بیش از یک جایگاه باشد."
+            )
+
+        return cleaned

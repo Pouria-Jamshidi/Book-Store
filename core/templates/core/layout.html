@@ -83,6 +83,7 @@
                             <li><a href="{% url 'newbook' %}" class="dropdown-item bnazaninBold">ساخت کتاب</a></li>
                             <li><a href="{% url 'newauthor' %}" class="dropdown-item bnazaninBold">اضافه کردن نویسنده</a> </li>
                             <li><a href="{% url 'newgenre' %}" class="dropdown-item bnazaninBold">اضافه کردن ژانرا</a> </li>
+                            <li><a href="{% url 'navbar_items' %}" class="dropdown-item bnazaninBold">تغییر نوار ناوبری</a> </li>
                             <li><hr class="dropdown-divider"></li>
                             {% endif %}
 
@@ -108,7 +109,8 @@
             </nav>
         {% endblock %}
     <!-- ============================================ END OF : Bootstraps nav bar ============================================ -->
-
+        {% block home-nav %}
+        {% endblock %}
     </header>
 
     <!-- ======================== body/main ======================== -->

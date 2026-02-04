@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Avg, OneToOneField
+from django.db.models import Avg, OneToOneField, UniqueConstraint
 
 
 # =================================================== Dynamic Addresses ===================================================
@@ -71,7 +71,10 @@ class Score(models.Model):
 
 class NavbarGenre(models.Model):
     position = models.PositiveSmallIntegerField(verbose_name='اولویت ژانرا')
-    genre = OneToOneField(to=Genre,on_delete=models.CASCADE, verbose_name= 'اسم ژانرا')
+    genre = OneToOneField(to=Genre,on_delete=models.CASCADE,null=True , blank=True, verbose_name= 'اسم ژانرا')
 
     class Meta:
         ordering = ['position'] #always order them based on position
+        constraints = [
+            UniqueConstraint(fields=['position'], name='unique_position'),
+        ]

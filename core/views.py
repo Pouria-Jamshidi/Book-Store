@@ -3,13 +3,24 @@ from django.views import View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
-from core.models import Book, Score
-from core.forms import NewAuthorForm, NewBookForm, NewGenreForm
+from core.models import Book, Score, NavbarGenre, Genre
+from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm
 
 
 def home(request):
     books = Book.objects.all()
-    return render(request,'core/home.html',{'books':books})
+    navbar_items = NavbarGenre.objects.all()
+    genre = Genre.objects.all()
+    context = {
+        'books':books,
+        'navbar_items':navbar_items,
+    }
+    return render(request,'core/home.html',context)
+
+def home_genre(request,genre_id):
+    books = Book.objects.filter(genre=genre_id)
+    navbar_items = NavbarGenre.objects.all()
+    return render(request,'core/home.html',{'books':books,'navbar_items':navbar_items})
 
 def book_detail(request,book_id):
     book = get_object_or_404(Book,pk=book_id)
@@ -119,3 +130,46 @@ class BookScoreView(LoginRequiredMixin, View):
         return redirect('book_detail',book_id=book_id)
 
 
+class NavbarView(LoginRequiredMixin, UserPassesTestMixin,View):
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            messages.warning(self.request, 'شما اجازه ورود به این صفحه را ندارید')
+            return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
+        messages.warning(self.request, 'ابتدا وارد شوید')
+        return redirect_to_login(
+            self.request.get_full_path(),
+            self.get_login_url(),
+            self.get_redirect_field_name(),
+        )
+
+    def get_initial_from_db(self):
+        """
+        Build initial dict like {'genre1': <genre_pk>, 'genre2': <genre_pk>, ...}
+        Only include positions that exist in DB and are within 1..MAX_ITEMS.
+        """
+        initial = {}
+        for ng in NavbarGenre.objects.all():
+            pos = ng.position
+            if 1 <= pos <= NavbarForm.MAX_ITEMS:
+                initial[f'genre{pos}'] = ng.genre_id
+        return initial
+
+    def get(self,request):
+        initial = self.get_initial_from_db()
+        form = NavbarForm(initial=initial)
+        return render(request,'core/navbar_genres.html', {'form':form})
+
+    def post(self,request):
+        form = NavbarForm(request.POST)
+        if form.is_valid():
+            for i in range(1, form.MAX_ITEMS+1):
+                genre = form.cleaned_data.get('genre{}'.format(i))
+                NavbarGenre.objects.update_or_create(position=i, defaults={'genre':genre})
+            messages.success(request, "منو نوار ناوبری شما با موفقیت ثبت گردید")
+            return redirect('home')
+        return render(request,'core/navbar_genres.html', {'form':form})

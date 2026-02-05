@@ -1,0 +1,10 @@
+from django import forms
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+
+User = get_user_model()
+
+class Increase_user_credit(forms.Form):
+    username = forms.ModelChoiceField(queryset=User.objects.all(), required=True, widget=forms.Select(attrs={'class':'form-Select', 'id':'username'}), label='نام کاربری')
+    credit = forms.IntegerField(required=True, widget=forms.NumberInput(attrs={'class':'form-Control'}), validators=[MinValueValidator(0)], label='مبلغ اضافه شونده به کیف پول')

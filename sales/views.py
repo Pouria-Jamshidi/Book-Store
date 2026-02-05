@@ -1,14 +1,17 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template.context_processors import request
 from django.views import View
 from django.db import transaction
+from django.db.models import F
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
 from core.models import Book
 from sales.models import Order,OrderItems,StatusChoices
 from sales.services import update_cart_cache
+from sales.forms import Increase_user_credit
 
+User = get_user_model()
 class Add_to_cart_View(LoginRequiredMixin, View):
     @transaction.atomic
     def post(self, request,book_id):
@@ -110,3 +113,45 @@ class Cart_View(LoginRequiredMixin, View):
         context = {'order':order,'items':items,'total_sum':total_sum}
 
         return render(request,'sales/cart_view.html', context)
+
+class Increase_credit(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            messages.warning(self.request, 'شما اجازه ورود به این صفحه را ندارید')
+            # Redirect back to previous page safely
+            return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
+        messages.warning(self.request, 'ابتدا وارد شوید')
+        return redirect_to_login(
+            self.request.get_full_path(),
+            self.get_login_url(),
+            self.get_redirect_field_name(),
+        )
+
+    def get(self,request):
+        form = Increase_user_credit()
+        return render(request,'sales/credit_increase.html',{'form':form})
+
+    @transaction.atomic
+    def post(self, request):
+        form = Increase_user_credit(request.POST)
+
+        if form.is_valid():
+
+            user = form.cleaned_data.get('username')
+            credit_to_add = form.cleaned_data.get('credit')
+
+
+            User.objects.filter(pk=user.pk).update(credit=F('credit') + credit_to_add) # F reads from data base at the moment so no mistake will happen if 2 admin try to increase at the same time.(only works on querysets.)
+
+            messages.success(request,'مبلغ {} به کیف پول کاربر {} اضافه شد'.format(credit_to_add, user.username))
+            return redirect('credit_increase')
+
+        return render(request, 'sales/credit_increase.html', {'form': form})
+
+
+class Tepmorary_payment_view(LoginRequiredMixin, View): # This is called temporary because it is going to be replaced with a real payment system
+    pass

@@ -76,6 +76,7 @@
                             <li><hr class="dropdown-divider"></li>
                             {% if request.user.is_superuser %}
                             <li><a href="{% url 'admin:index' %}" class="dropdown-item bnazaninBold" target="_blank">بازکردن صفحه ادمین</a> </li>
+                            <li><a href="{% url 'credit_increase' %}" class="dropdown-item bnazaninBold" target="_blank">افزایش کیف پول</a> </li>
                             <li><hr class="dropdown-divider"></li>
                             {% endif %}
 

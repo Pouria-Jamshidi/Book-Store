@@ -66,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.content_processors.shopping_cart_item_count', # added manually
             ],
         },
     },
@@ -124,7 +125,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'core/static',
 ]
 
-# Media files
+# Media files (manually added)
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -132,16 +133,19 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
+# Django handle the model's id (manually added)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# changed user authentication mode (manually added)
 AUTH_USER_MODEL = "accounts.User"
 
+# login and logout urls (added manually)
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 
-# For number seperating :
+# For number seperating (added manually) :
 USE_L10N = True
 USE_THOUSAND_SEPARATOR = True
 THOUSAND_SEPARATOR = ','

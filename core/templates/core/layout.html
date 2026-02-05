@@ -97,10 +97,10 @@
                             </ul>
                         </li>
                         <li class="nab-item">
-                            <a class="btn btn-success" href="#">
+                            <a class="btn btn-success position-relative" href="{% url 'cart_view' %}">
                                 سبد خرید
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    99+
+                                <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                                    {{ cart_count }}
                                     <span class="visually-hidden">کتاب های در انتظار پرداخت</span>
                                 </span>
                             </a>

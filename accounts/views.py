@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView, LogoutView
 from accounts.forms import Register_form, Login_form
+from sales.services import update_cart_cache
 
 
 class RegisterView(View):
@@ -48,7 +49,13 @@ class Login_view(LoginView):
 
         user = form.get_user()
         messages.success(self.request,'کاربر {} با موفقیت وارد شد'.format(user.username))
-        return super().form_valid(form)
+
+        # ======================================== To update the number of cart items in session when user logs in ===================================
+        # return super().form_valid(form)
+        response = super().form_valid(form) # performs the login adn save the http response in a variable
+        update_cart_cache(self.request) # update the number of cart items
+        return response # Return the saved http response
+        # =================================================================================================================================
 
 
     def form_invalid(self, form):

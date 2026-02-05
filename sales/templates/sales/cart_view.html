@@ -1,0 +1,60 @@
+{% extends 'core/layout.html' %}
+
+{% block title %}سبد خرید{% endblock %}
+
+{% block main %}
+    <div class="row mt-4 p-1 d-flex justify-content-center">
+
+        <div class="col-sm-5 border border-2 p-3 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
+            {% if order %}
+            {% for item in items %}
+                <form action="{% url 'cart_remove' book_id=item.book.id %}?next={{ request.path }}" method="post" class="bnazaninBold mt-3 mb-2">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    {%  for error in form.non_field_errors %}
+                        <div class="alert alert-{{ message.tags }}">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="card mb-3">
+                  <div class="row g-0">
+                    <div class="col-2 d-flex">
+                      <a href="{% url 'book_detail' book_id=item.book.id %}" class="d-flex w-100 h-100" title="باز کردن کتاب">
+                      <img src="{{ item.book.cover.url }}" class="img-fluid rounded-end object-fit-cover" alt="{{ item.book.title}}">
+                      </a>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <a href="{% url 'book_detail' book_id=item.book.id %}" style="text-decoration-line: none; color:inherit;" title="باز کردن کتاب">
+                            <h5 class="card-title">{{ item.book.title}}</h5>
+                        </a>
+                        <p class="card-text">نویسنده : {{ item.book.author }}</p>
+                        <hr>
+                        <p class="card-text"><small class="text-body-secondary">مبلغ کتاب : {{ item.price }} تومان</small></p>
+                      </div>
+                    </div>
+                    <div class="col-md-2 d-flex">
+                      <div class="card-body p-0 align-items-stretch">
+                        <input type="submit" class="btn btn-danger btn-sm h-100 w-100 rounded-end-0 text-wrap" value="حذف از سبد خرید">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </form>
+
+            {% endfor %}
+
+            <form action="#" method="post" class="bnazaninBold p-0">
+                {% csrf_token %}
+                <input type="submit" class="btn btn-info w-100 text-wrap" style="font-size: 7ch" value="تسویه حساب (مبلغ {{ total_sum }} تومان)"
+                       onmouseenter="this.classList.replace('btn-info', 'btn-success')"
+                       onmouseleave="this.classList.replace('btn-success', 'btn-info')">
+            </form>
+
+            {% else %}
+            <p style="text-align: center">شما سبد خریدی ندارید</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}

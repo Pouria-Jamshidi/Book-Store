@@ -13,6 +13,13 @@ from sales.forms import Increase_user_credit
 
 User = get_user_model()
 class Add_to_cart_View(LoginRequiredMixin, View):
+    """
+    CBV: Adds books to the shopping cart\n
+    - user has to be logged in
+    - Checks to see if we already have it in shopping cart or have bought it before
+    - Recalculate total of the order after each addition
+    - updates the number of items in shopping cart (session value) after each addition
+    """
     @transaction.atomic
     def post(self, request,book_id):
         book = get_object_or_404(Book,pk=book_id)
@@ -56,6 +63,13 @@ class Add_to_cart_View(LoginRequiredMixin, View):
         return redirect(next_url,pk=book_id)
 
 class Remove_from_cart_View(LoginRequiredMixin, View):
+    """
+    CBV: Removes a book from the shopping cart\n
+    - user has to be logged in
+    - Checks to see if we have a shopping cart, and if we do, does it exist in it?
+    - Recalculate total of the order after each removing
+    - updates the number of items in shopping cart (session value) after each removing
+    """
 
     @transaction.atomic
     def post(self, request, book_id):
@@ -102,6 +116,10 @@ class Remove_from_cart_View(LoginRequiredMixin, View):
 
 
 class Cart_View(LoginRequiredMixin, View):
+    """
+    CBV: Renders a page that shows our shopping cart\n
+    - user has to be logged in
+    """
 
     def get(self,request):
         order = Order.objects.filter(user=request.user,status=StatusChoices.PENDING).first()
@@ -115,6 +133,10 @@ class Cart_View(LoginRequiredMixin, View):
         return render(request,'sales/cart_view.html', context)
 
 class Increase_credit(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    CBV: Adds credit to the desired user\n
+    - user performing the task has to be a superuser
+    """
     def test_func(self):
         return self.request.user.is_superuser
 

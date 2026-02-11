@@ -9,7 +9,11 @@ from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm
 
 
 def home(request):
-
+    """
+    FBV: Rendering the main page with every books without filtering
+    :param request:
+    :return:
+    """
     context = {
         'books':Book.objects.all(),
         'navbar_items':NavbarGenre.objects.all(),
@@ -18,7 +22,12 @@ def home(request):
     return render(request,'core/home.html',context)
 
 def home_genre(request,genre_id):
-
+    """
+    FBV: Rendering main page with only the desired genre books
+    :param request:
+    :param genre_id: ID of desired genre
+    :return:
+    """
     context = {
         'books': Book.objects.filter(genre=genre_id),
         'navbar_items': NavbarGenre.objects.all(),
@@ -28,6 +37,12 @@ def home_genre(request,genre_id):
     return render(request,'core/home.html',context)
 
 def home_author(request,author_id):
+    """
+    FBV: Rendering main page with only the desired author books
+    :param request:
+    :param author_id: ID of the desired author
+    :return:
+    """
     context = {
         'books': Book.objects.filter(author = author_id),
         'navbar_items': NavbarGenre.objects.all(),
@@ -37,6 +52,16 @@ def home_author(request,author_id):
     return render(request,'core/home.html',context)
 
 def book_detail(request,book_id):
+    """
+    FBV: renders a page that shows selected book's detail.\n
+    context for template:\n
+    1. what book
+    2. if it is already purchased
+    3. If the user currently has the book in their shopping cart
+    :param request:
+    :param book_id: ID of the desired book
+    :return:
+    """
     book = get_object_or_404(Book,pk=book_id)
 
     # ================================= Check to see if user has already purchased , show download ======================================
@@ -78,8 +103,12 @@ def book_detail(request,book_id):
     return render(request,'core/book_detail.html', context)
 
 
-
 class NewBook(LoginRequiredMixin, UserPassesTestMixin,View):
+    """
+    CBV: Renders a page where user can fill in a form to add new books in DB\n
+    - user needs to be staff or superuser
+    """
+
     def get(self,request):
         form = NewBookForm()
         return render(request, 'core/new_book.html',{'form':form})
@@ -111,6 +140,10 @@ class NewBook(LoginRequiredMixin, UserPassesTestMixin,View):
         )
 
 class NewAuthorView(LoginRequiredMixin, UserPassesTestMixin,View):
+    """
+    CBV: Renders a page where user can fill in a form to add new authors in DB\n
+    - user needs to be staff or superuser
+    """
     def get(self,request):
         form = NewAuthorForm()
         return render(request, 'core/new_author.html',{'form':form})
@@ -139,6 +172,10 @@ class NewAuthorView(LoginRequiredMixin, UserPassesTestMixin,View):
         )
 
 class NewGenreView(LoginRequiredMixin, UserPassesTestMixin,View):
+    """
+    CBV: Renders a page where user can fill in a form to add new genres in DB\n
+    - user needs to be staff or superuser
+    """
     def get(self,request):
         form = NewGenreForm()
         return render(request, 'core/new_genre.html',{'form':form})
@@ -168,6 +205,10 @@ class NewGenreView(LoginRequiredMixin, UserPassesTestMixin,View):
         )
 
 class BookScoreView(LoginRequiredMixin, View):
+    """
+    CBV: Allow user submit a score for the book\n
+    user needs to be logged in.
+    """
     def get(self,request,book_id):
         return redirect('book_detail',book_id=book_id)
 
@@ -180,6 +221,10 @@ class BookScoreView(LoginRequiredMixin, View):
 
 
 class NavbarView(LoginRequiredMixin, UserPassesTestMixin,View):
+    """
+    CBV: Renders a page with form for changing navbar genre items.\n
+    - user need to be logged in and be staff or superuser
+    """
 
     def test_func(self):
         return self.request.user.is_staff or self.request.user.is_superuser
@@ -198,8 +243,8 @@ class NavbarView(LoginRequiredMixin, UserPassesTestMixin,View):
 
     def get_initial_from_db(self):
         """
-        Build initial dict like {'genre1': <genre_pk>, 'genre2': <genre_pk>, ...}
-        Only include positions that exist in DB and are within 1..MAX_ITEMS.
+        CBV: Builds initial dictionary like {'genre1': <genre_pk>, 'genre2': <genre_pk>, ...}
+        Only include positions that exist in DB and are within 1 to MAX_ITEMS.
         """
         initial = {}
         for ng in NavbarGenre.objects.all():

@@ -1,9 +1,10 @@
 from django.urls import path
-from core.views import home, NewBook, NewAuthorView, NewGenreView, book_detail, BookScoreView, NavbarView, home_genre
+from core.views import home, NewBook, NewAuthorView, NewGenreView, book_detail, BookScoreView, NavbarView, home_genre, home_author
 
 urlpatterns = [
     path('', home, name='home'),
     path('genre/<int:genre_id>/', home_genre, name='home_genre'),
+    path('author/<int:author_id>/', home_author, name='home_author'),
     path('books/newbook/', NewBook.as_view(), name='newbook'),
     path('author/new/',NewAuthorView.as_view(), name='newauthor'),
     path('genre/new/',NewGenreView.as_view(), name='newgenre'),

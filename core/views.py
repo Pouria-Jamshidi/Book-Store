@@ -3,7 +3,8 @@ from django.views import View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
-from core.models import Book, Score, NavbarGenre, Genre
+from django.core.paginator import Paginator
+from core.models import Book, Score, NavbarGenre
 from sales.models import Order, OrderItems, StatusChoices
 from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm
 
@@ -14,11 +15,27 @@ def home(request):
     :param request:
     :return:
     """
+    # ======================== Adding pagination ==========================
+    p = Paginator(Book.objects.all(), 12)
+    page = request.GET.get('page')
+    books = p.get_page(page)
+    # ======================== for page surfing ===========================
+    current_page = books.number
+    total_pages = p.num_pages
+    next_pages = [i for i in range(current_page + 1, min(current_page + 5, total_pages) + 1)]  # min prevents numbers above max page
+    previous_pages = [i for i in range(max(current_page - 4, 1), current_page)]  # max prevents numbers below 1
+    # =====================================================================
+
     context = {
-        'books':Book.objects.all(),
-        'navbar_items':NavbarGenre.objects.all(),
-        'active_genre': None
+        'books': books,
+        'navbar_items': NavbarGenre.objects.all(),
+        'active_genre': None,
+        'current_page': current_page,
+        'total_pages': total_pages,
+        'next_pages': next_pages,
+        'previous_pages': previous_pages,
     }
+
     return render(request,'core/home.html',context)
 
 def home_genre(request,genre_id):
@@ -28,10 +45,26 @@ def home_genre(request,genre_id):
     :param genre_id: ID of desired genre
     :return:
     """
+
+    # ======================== Adding pagination ==========================
+    p = Paginator(Book.objects.filter(genre= genre_id), 12)
+    page = request.GET.get('page')
+    books = p.get_page(page)
+    # ======================== for page surfing ===========================
+    current_page = books.number
+    total_pages = p.num_pages
+    next_pages = [i for i in range(current_page+1,min(current_page+6,total_pages)+1)] # min prevents numbers above max page
+    previous_pages = [i for i in range(max(current_page-5,1),current_page)] # max prevents numbers below 1
+    # =====================================================================
+
     context = {
-        'books': Book.objects.filter(genre=genre_id),
+        'books': books,
         'navbar_items': NavbarGenre.objects.all(),
-        'active_genre': genre_id
+        'active_genre': genre_id,
+        'current_page': current_page,
+        'total_pages': total_pages,
+        'next_pages': next_pages,
+        'previous_pages': previous_pages,
     }
 
     return render(request,'core/home.html',context)
@@ -43,10 +76,26 @@ def home_author(request,author_id):
     :param author_id: ID of the desired author
     :return:
     """
+
+    # ======================== Adding pagination ==========================
+    p = Paginator(Book.objects.filter(author= author_id), 12)
+    page = request.GET.get('page')
+    books = p.get_page(page)
+    # ======================== for page surfing ===========================
+    current_page = books.number
+    total_pages = p.num_pages
+    next_pages = [i for i in range(current_page + 1, min(current_page + 6, total_pages) + 1)]  # min prevents numbers above max page
+    previous_pages = [i for i in range(max(current_page - 5, 1), current_page)]  # max prevents numbers below 1
+    # =====================================================================
+
     context = {
-        'books': Book.objects.filter(author = author_id),
+        'books': books,
         'navbar_items': NavbarGenre.objects.all(),
-        'active_genre': None
+        'active_genre': None,
+        'current_page': current_page,
+        'total_pages': total_pages,
+        'next_pages': next_pages,
+        'previous_pages': previous_pages,
     }
 
     return render(request,'core/home.html',context)

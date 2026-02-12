@@ -30,6 +30,12 @@
 {% block main %}
 
     <div class="row gx-1 mt-2 d-flex justify-content-start ms-4 me-4">
+        <div>
+            <p class="bnazaninBold"
+               style="margin-top: 0.5em;margin-bottom: 0.5em;margin-right: 1.5em;font-size: 1.5em">
+                کتاب های شماره  {{ books.start_index }} تا {{ books.end_index }} از {{ books.paginator.count }} کتاب
+            </p>
+        </div>
         {% for book in books %}
         <div class="col-lg-3 col-md-4 col-sm-6 col-6 bnazaninBold">
             <div class="card mb-3">
@@ -46,14 +52,75 @@
 
                   </div>
                     <a href="{% url 'book_detail' book_id=book.id %}" class="btn btn-info w-100 rounded-top-0 rounded-end-0">مشاهده کتاب</a>
-{#                  <div class="card-footer d-flex p-0">#}
-{#                      <a href="{% url 'book_detail' book_id=book.id %}" class="btn btn-info w-100 rounded-top-0 rounded-end-0 flex-fill">مشاهده کتاب</a>#}
-{#                  </div>#}
                 </div>
               </div>
             </div>
         </div>
         {% endfor %}
+
+    <div class="mt-5 mb-5 bnazaninBold" dir="ltr" style="direction: ltr">
+        <nav aria-label="page navigation">
+          <ul class="pagination pagination-lg justify-content-center">
+
+            {% if books.has_previous %}
+                <!-- first page and previous page -->
+                <li class="page-item">
+                  <a href="?page=1" class="page-link">صفحه اول</a>
+                </li>
+                <li class="page-item">
+                  <a href="?page={{ books.previous_page_number }}" class="page-link">قبلی</a>
+                </li>
+
+            {% else %}
+                <!-- first page and previous page -->
+                <li class="page-item disabled">
+                  <span class="page-link">صفحه اول</span>
+                </li>
+                <li class="page-item disabled">
+                  <span class="page-link">قبلی</span>
+                </li>
+            {% endif %}
+
+            <!-- up to 5 previous pages if they exist -->
+            {% for i in previous_pages %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+              </li>
+            {% endfor %}
+
+            <!-- current page -->
+            <li class="page-item active"><span class="page-link" style="cursor: pointer">{{ current_page }}</span></li>
+
+            <!-- up to 5 more pages ahead if they exist -->
+            {% for i in next_pages %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {% if books.has_next %}
+                <!-- next page and last page -->
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ books.next_page_number }}">بعدی</a>
+                </li>
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ total_pages }}">صفحه آخر</a>
+                </li>
+
+            {% else %}
+                <!-- next page and last page -->
+                <li class="page-item disabled">
+                  <span class="page-link">بعدی</span>
+                </li>
+                <li class="page-item disabled">
+                  <span class="page-link">صفحه آخر</span>
+                </li>
+            {% endif %}
+
+
+          </ul>
+        </nav>
+    </div>
     </div>
 
 {% endblock %}

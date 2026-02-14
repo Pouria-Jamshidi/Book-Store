@@ -124,11 +124,8 @@ class Cart_View(LoginRequiredMixin, View):
     def get(self,request):
         order = Order.objects.filter(user=request.user,status=StatusChoices.PENDING).first()
         items = OrderItems.objects.filter(order=order).all()
-        total_sum = 0
-        for item in items:
-            total_sum += item.price*item.quantity
 
-        context = {'order':order,'items':items,'total_sum':total_sum}
+        context = {'order':order,'items':items}
 
         return render(request,'sales/cart_view.html', context)
 

@@ -23,7 +23,7 @@ def home(request):
     current_page = books.number
     total_pages = p.num_pages
     next_pages = [i for i in range(current_page + 1, min(current_page + 5, total_pages) + 1)]  # min prevents numbers above max page
-    previous_pages = [i for i in range(max(current_page - 4, 1), current_page)]  # max prevents numbers below 1
+    previous_pages = [i for i in range(max(current_page - 5, 1), current_page)]  # max prevents numbers below 1
     # =====================================================================
 
     context = {
@@ -53,7 +53,7 @@ def home_genre(request,genre_id):
     # ======================== for page surfing ===========================
     current_page = books.number
     total_pages = p.num_pages
-    next_pages = [i for i in range(current_page+1,min(current_page+6,total_pages)+1)] # min prevents numbers above max page
+    next_pages = [i for i in range(current_page+1,min(current_page+5,total_pages)+1)] # min prevents numbers above max page
     previous_pages = [i for i in range(max(current_page-5,1),current_page)] # max prevents numbers below 1
     # =====================================================================
 
@@ -84,7 +84,7 @@ def home_author(request,author_id):
     # ======================== for page surfing ===========================
     current_page = books.number
     total_pages = p.num_pages
-    next_pages = [i for i in range(current_page + 1, min(current_page + 6, total_pages) + 1)]  # min prevents numbers above max page
+    next_pages = [i for i in range(current_page + 1, min(current_page + 5, total_pages) + 1)]  # min prevents numbers above max page
     previous_pages = [i for i in range(max(current_page - 5, 1), current_page)]  # max prevents numbers below 1
     # =====================================================================
 

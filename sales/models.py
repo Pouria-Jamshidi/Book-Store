@@ -36,3 +36,6 @@ class OrderItems(models.Model):
         verbose_name = 'ایتم های فاکتور'
         verbose_name_plural = 'ایتم های فاکتور'
         unique_together = ('order', 'book')
+
+    def __str__(self):
+        return f'Order id: {self.order.id} - User: {self.order.user} - {self.book.title} - Price: {self.price}'

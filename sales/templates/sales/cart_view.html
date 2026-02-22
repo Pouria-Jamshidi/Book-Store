@@ -44,7 +44,7 @@
 
             {% endfor %}
 
-            <form action="#" method="post" class="bnazaninBold p-0">
+            <form action="{% url 'send_to_payment' %}" method="post" class="bnazaninBold p-0">
                 {% csrf_token %}
                 <input type="submit" class="btn btn-info w-100 text-wrap" style="font-size: 7ch" value="تسویه حساب (مبلغ {{ order.total }} تومان)"
                        onmouseenter="this.classList.replace('btn-info', 'btn-success')"

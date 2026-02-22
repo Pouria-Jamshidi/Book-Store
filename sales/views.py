@@ -1,15 +1,18 @@
+
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.views import redirect_to_login
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.db import transaction
-from django.db.models import F
-from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import redirect_to_login
+from django.db.models import Value,F
+from django.db.models.functions import Greatest
 from core.models import Book
 from sales.models import Order,OrderItems,StatusChoices
 from sales.services import update_cart_cache
-from sales.forms import Increase_user_credit
+from sales.forms import Increase_user_credit, PaymentForm
 
 User = get_user_model()
 class Add_to_cart_View(LoginRequiredMixin, View):
@@ -171,6 +174,66 @@ class Increase_credit(LoginRequiredMixin, UserPassesTestMixin, View):
 
         return render(request, 'sales/credit_increase.html', {'form': form})
 
+@login_required
+def send_to_payment(request):
+    if request.method == 'POST':
+        return redirect('payment')
 
-class Tepmorary_payment_view(LoginRequiredMixin, View): # This is called temporary because it is going to be replaced with a real payment system
-    pass
+    return redirect('cart_view')
+
+
+class Temp_purchase(LoginRequiredMixin, View): # This is called temporary because it is going to be replaced with a real payment system
+
+    def get(self,request):
+        order = Order.objects.filter(user=request.user,status=StatusChoices.PENDING).first()
+
+        # =============== Checking to see if a cart exists or not ===============
+        if not order:
+            messages.warning(request, "سفارش پیدا نشد.")
+            return redirect('cart_view')
+        # =======================================================================
+
+        form = PaymentForm()
+        remain = max(order.total - request.user.credit,0)
+        context = {'order':order,'form':form, 'remain':remain}
+        return render(request,'sales/payment.html', context)
+
+    @transaction.atomic
+    def post(self,request):
+        order = Order.objects.select_for_update().filter(user=request.user, status=StatusChoices.PENDING).first()
+        user = User.objects.select_for_update().get(pk=request.user.pk)
+
+        # =============== Checking to see if a cart exists or not ===============
+        if not order:
+            messages.warning(request, "سفارش پیدا نشد.")
+            return redirect('cart_view')
+        # =======================================================================
+
+        remain = max(order.total - user.credit, 0)
+        form = PaymentForm(request.POST)
+        context = {'order': order, 'form': form, 'remain': remain}
+
+        if form.is_valid():
+
+            use_credit = form.cleaned_data.get('use_credit')
+            if use_credit:
+                User.objects.filter(pk=request.user.pk).update(credit=Greatest(F('credit') - Value(order.total),Value(0)))
+            else:
+                # Since the amount added to user wallet (credits) is the same that is removed, without their initial credit touched,
+                # we don't really need to make any changes here
+                pass
+
+            Order.objects.filter(pk=order.pk).update(status=StatusChoices.PAID)
+
+            # ========================================== updating the number of items in cart ============================================
+            update_cart_cache(request)
+            # ============================================================================================================================
+
+            messages.success(request,'تراکنش شما با موفقیت انجام شد.')
+
+            return redirect('home')
+        return render(request, 'sales/payment.html', context)
+
+
+
+

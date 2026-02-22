@@ -1,0 +1,53 @@
+{% extends 'core/layout.html' %}
+
+{% block title %}خرید{% endblock %}
+
+{% block main %}
+
+    <div class="row mt-4 p-1 d-flex justify-content-center">
+
+        <div class="col-sm-5 border border-2 p-4 mb-5 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
+            <div class="bnazaninBold">
+                <p>کل مبلغ فاکتور : {{ order.total }} تومان</p>
+                <p>موجودی کیف پول : {{ request.user.credit }} تومان</p>
+            </div>
+
+
+            <form action="{% url 'payment' %}" method="post" class="bnazaninBold">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-{{ message.tags }}">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+                {% for field in form %}
+                    <div style="margin-bottom: 1%">
+                        <div class="form-check form-switch mb-3 d-flex justify-content-start">
+                            <label for="{{ field.id_for_label }}" class="form-check-label ms-2" >{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-{{ message.tags }}">{{ error }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    </div>
+                {% endfor %}
+
+                {% if order.total > request.user.credit %}
+                    <p>شارژ کیف پول کافی نیست</p>
+                    <p>اختلاف مبلغ قابل پرداخت : {{ remain }} تومان</p>
+                {% else %}
+                    <p>شارژ کیف پول کافی است</p>
+                {% endif %}
+
+
+                <input type="submit" class="btn btn-primary w-100" value="پرداخت"
+                onmouseenter="this.classList.replace('btn-primary','btn-success')"
+                onmouseleave="this.classList.replace('btn-success','btn-primary')">
+            </form>
+        </div>
+    </div>
+{% endblock %}

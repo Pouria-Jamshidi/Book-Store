@@ -1,3 +1,6 @@
+import os
+from django.contrib.auth.decorators import login_required
+from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib import messages
@@ -316,3 +319,22 @@ class NavbarView(LoginRequiredMixin, UserPassesTestMixin,View):
             messages.success(request, "منو نوار ناوبری شما با موفقیت ثبت گردید")
             return redirect('home')
         return render(request,'core/navbar_genres.html', {'form':form})
+
+@login_required
+def download_book(request,book_id):
+    book = get_object_or_404(Book,pk=book_id)
+
+    owned = OrderItems.objects.filter(order__user=request.user, order__status=StatusChoices.PAID, book=book).exists()
+
+    if not owned:
+        messages.warning(request,"این کتاب توسط شما خریداری نشده است و شما اجازه دانلود آن را ندارید.")
+        return redirect("book_detail",book_id=book_id)
+
+    try :
+        filename = os.path.basename(book.file.name) # basename takes the name of the file form full path
+        response = FileResponse(book.file, filename=filename, as_attachment=True) # Since it is a file field we don't need to open it
+    except :
+        messages.error(request, "در بارگیری کتاب مشکلی پیش آمد ، لطفا جهت حل هرچه سریع تر این مشکل پشتیبانی را مطلع کنید.")
+        return redirect("book_detail",book_id=book_id)
+
+    return response

@@ -1,0 +1,109 @@
+{% extends 'accounts/profile.html' %}
+{% load static %}
+
+{% block profile-content %}
+<div class="border border-2 rounded h-100 p-3" dir="rtl">
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for book in books %}
+        <div class="col-lg-3 col-md-4 col-sm-6 col-6 bnazaninBold">
+            <div class="card mb-3">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img src="{{ book.cover.url }}" class="img-fluid rounded-end h-100" alt="{{ book.title }}">
+                </div>
+                <div class="col-md-8 d-flex flex-column">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ book.title }}</h4>
+                    <h6 class="card-title">نویسنده : {{ book.author }}</h6>
+                    <hr>
+                    <p class="card-text">
+                        <small class="text-body-secondary">
+                            <span style="margin-left: 2ch">امتیاز شما : </span>
+{#                                        <span style="margin-left: 1ch">({{ book.score_average }}/5)</span>#}
+                            <span dir="ltr">
+                                {% for i in '12345'|make_list %}
+                                {% if i|floatformat <= book.user_score|floatformat %}
+                                ⭐
+                                {% else %}
+                                ☆
+                                {% endif %}
+                                {% endfor %}
+                            </span>
+                        </small>
+                    </p>
+
+                  </div>
+                    <a href="{% url 'book_detail' book_id=book.id %}" class="btn btn-info w-100 rounded-top-0 rounded-end-0">مشاهده کتاب</a>
+                </div>
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+    </div>
+<div class="mt-5 bnazaninBold" dir="ltr" style="direction: ltr">
+    <nav aria-label="page navigation">
+      <ul class="pagination pagination-lg justify-content-center">
+
+        {% if books.has_previous %}
+            <!-- first page and previous page -->
+            <li class="page-item">
+              <a href="?page=1" class="page-link">صفحه اول</a>
+            </li>
+            <li class="page-item">
+              <a href="?page={{ books.previous_page_number }}" class="page-link">قبلی</a>
+            </li>
+
+        {% else %}
+            <!-- first page and previous page -->
+            <li class="page-item disabled">
+              <span class="page-link">صفحه اول</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">قبلی</span>
+            </li>
+        {% endif %}
+
+        <!-- up to 5 previous pages if they exist -->
+        {% for i in previous_pages %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+          </li>
+        {% endfor %}
+
+        <!-- current page -->
+        <li class="page-item active"><span class="page-link" style="cursor: pointer">{{ current_page }}</span></li>
+
+        <!-- up to 5 more pages ahead if they exist -->
+        {% for i in next_pages %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+            </li>
+        {% endfor %}
+
+        {% if books.has_next %}
+            <!-- next page and last page -->
+            <li class="page-item">
+              <a class="page-link" href="?page={{ books.next_page_number }}">بعدی</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ total_pages }}">صفحه آخر</a>
+            </li>
+
+        {% else %}
+            <!-- next page and last page -->
+            <li class="page-item disabled">
+              <span class="page-link">بعدی</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">صفحه آخر</span>
+            </li>
+        {% endif %}
+
+
+      </ul>
+    </nav>
+</div>
+</div>
+{% endblock %}

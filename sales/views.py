@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.db import transaction
-from django.db.models import Value,F
+from django.db.models import Value, F, Sum, ExpressionWrapper, DecimalField
 from django.db.models.functions import Greatest
 from core.models import Book
 from sales.models import Order,OrderItems,StatusChoices
@@ -56,7 +56,8 @@ class Add_to_cart_View(LoginRequiredMixin, View):
             messages.warning(request, 'این کتاب قبلا به سبد خرید شما اضافه شده')
 
         # ================================================= re-calculating the total =================================================
-        order.total = sum(item.price*item.quantity for item in order.items.all())
+        # order.total = sum(item.price*item.quantity for item in order.items.all())
+        order.total = OrderItems.objects.filter(order=order).aggregate(total=Sum(ExpressionWrapper(F('price') * F('quantity'), output_field=DecimalField(max_digits=10, decimal_places=0))))['total'] or 0
         order.save()
         # ============================================================================================================================
         # ========================================== updating the number of items in cart ============================================
@@ -102,7 +103,8 @@ class Remove_from_cart_View(LoginRequiredMixin, View):
         item.delete()
 
         # ================================================= re-calculating the total =================================================
-        order.total = sum(item.price * item.quantity for item in order.items.all())
+        # order.total = sum(item.price * item.quantity for item in order.items.all())
+        order.total = OrderItems.objects.filter(order=order).aggregate(total = Sum(ExpressionWrapper(F('price')*F('quantity'),output_field=DecimalField(max_digits=10, decimal_places=0))))['total'] or 0
         # ===========================================================================================================================
 
         # ======================= delete order if deleting it from cart empties the order else save it ===============================

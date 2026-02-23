@@ -46,8 +46,8 @@
 
                 <label for="score" style="flex: 2">امتیاز خود را وارد کنید :</label>
                 <select class="form-select" aria-label="book score select" style="flex: 3" name="score">
-                  <option selected value="0">0 ستاره</option>
-                  <option value="1">1 ستاره</option>
+{#                  <option selected value="0">0 ستاره</option>#}
+                  <option selected value="1">1 ستاره</option>
                   <option value="2">2 ستاره</option>
                   <option value="3">3 ستاره</option>
                   <option value="4">4 ستاره</option>
@@ -74,7 +74,7 @@
                        onmouseleave="this.classList.replace('btn-danger','btn-warning')" value="حذف از سبد خرید">
                     </form>
                 {% elif purchased %}
-                    <a href="#" style="flex:1; font-size: 2dvmax" class="btn btn-success rounded-end-0 rounded-top-0 text-center d-flex align-items-center"
+                    <a href="{% url 'download_book' book_id=book.id %}" style="flex:1; font-size: 2dvmax" class="btn btn-success rounded-end-0 rounded-top-0 text-center d-flex align-items-center justify-content-center"
                    onmouseenter="this.classList.replace('btn-success','btn-info')"
                    onmouseleave="this.classList.replace('btn-info','btn-success')">دانلود کتاب</a>
                 {% else %}

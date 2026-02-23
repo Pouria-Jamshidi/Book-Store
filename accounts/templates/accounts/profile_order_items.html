@@ -1,0 +1,34 @@
+{% extends 'accounts/profile.html' %}
+{% load static %}
+
+{% block profile-content %}
+<div class="border border-2 rounded h-100 p-3 w-75 ms-auto" style="background-color: rgba(0,115,204,0.05);" dir="rtl">
+    <p class="bnazaninBold" style="font-size: 3em">آیتم های فاکتور شماره : {{ order_id }}</p>
+    <hr>
+    {% for item in items %}
+
+        <div class="card mb-3">
+          <div class="row g-0">
+            <div class="col-2 d-flex">
+
+              <a href="{% url 'book_detail' book_id=item.book.id %}" class="d-flex w-100 h-100" title="باز کردن کتاب">
+              <img src="{{ item.book.cover.url }}" class="img-fluid rounded-end object-fit-cover" alt="{{ item.book.title}}">
+              </a>
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <a href="{% url 'book_detail' book_id=item.book.id %}" style="text-decoration-line: none; color:inherit;" title="باز کردن کتاب">
+                    <h5 class="card-title bnazaninBold" style="font-size: 2em">{{ item.book.title}}</h5>
+                </a>
+                <p class="card-text bnazaninBold" style="font-size: 1.5em">نویسنده : {{ item.book.author }}</p>
+                <hr>
+                <p class="card-text bnazaninBold" style="font-size: 1.5em"><small class="text-body-secondary">مبلغ کتاب : {{ item.price }} تومان</small></p>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex">
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

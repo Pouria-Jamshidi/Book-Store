@@ -22,7 +22,6 @@
     <style>
     footer {margin-top:auto}
         {% block style %}
-
         {% endblock %}
     </style>
 
@@ -71,7 +70,7 @@
                                 {{ request.user.username }}
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a href="#" class="dropdown-item bnazaninBold">اکانت کاربری</a></li>
+                            <li><a href="{% url 'profile' %}" class="dropdown-item bnazaninBold">اکانت کاربری</a></li>
 
                             <li><hr class="dropdown-divider"></li>
                             {% if request.user.is_superuser %}

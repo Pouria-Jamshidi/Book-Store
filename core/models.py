@@ -82,4 +82,4 @@ class NavbarGenre(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.position} = {self.genre.name}'
+        return f'{self.position} = {self.genre}'

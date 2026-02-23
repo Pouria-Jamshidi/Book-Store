@@ -36,6 +36,15 @@
                 کتاب های شماره  {{ books.start_index }} تا {{ books.end_index }} از {{ books.paginator.count }} کتاب
             </p>
         </div>
+        {% if not books %}
+            <div class="row mt-4 p-1 d-flex justify-content-center">
+                <div class="col-sm-4 border border-2 p-3 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
+                    <p class="bnazaninBold d-flex justify-content-center">کتابی وجود ندارد</p>
+                </div>
+            </div>
+
+        {% else %}
+
         {% for book in books %}
         <div class="col-lg-3 col-md-4 col-sm-6 col-6 bnazaninBold">
             <div class="card mb-3">
@@ -58,6 +67,10 @@
         </div>
         {% endfor %}
 
+        {% endif %}
+
+
+    <!-- ====================================== Pages ====================================== -->
     <div class="mt-5 mb-5 bnazaninBold" dir="ltr" style="direction: ltr">
         <nav aria-label="page navigation">
           <ul class="pagination pagination-lg justify-content-center">

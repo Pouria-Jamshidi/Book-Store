@@ -1,0 +1,71 @@
+{% extends 'core/layout.html' %}
+{% load static %}
+
+{% block title %}پروفایل کاربری{% endblock %}
+{% block links %}
+    {{ block.super }}
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel = 'stylesheet' href = '{% static 'css/profile.css' %}'>
+{% endblock %}
+
+{% block style %}
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid padding-bottom-3x mb-2 mt-5">
+    <div class="row">
+        <div class="col-lg-3" dir="ltr">
+            <aside class="user-info-wrapper">
+                <div class="user-cover" style="background-color: darksalmon;">
+{#                    <div class="info-label" data-toggle="tooltip" title="" data-original-title="You currently have 290 Reward Points to spend"><i class="icon-medal"></i>290 points</div>#}
+                </div>
+                <div class="user-info">
+
+                    <div class="user-data" dir="rtl">
+                        <h4 style="margin-right:0.5em ; font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.75em">{{ request.user.username }}</h4><span style="margin-right:0.5em ; font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: .90em">{% if request.user.is_superuser %}ابرکاربر{% elif request.user.is_staff %}پرسنل کتابخانه{% else %}کاربر ساده{% endif %}</span>
+                    </div>
+
+                    <div class="user-avatar">
+                        {% if request.user.pfp %}
+                            <img src="{{ request.user.pfp.url }}" alt="Profile picture">
+                        {% else %}
+                            <img src="{{ MEDIA_URL }}pfp_uploads/default_avatar.png" alt="Profile picture">
+                        {% endif %}
+                    </div>
+                </div>
+            </aside>
+            <nav class="list-group">
+                <a {% if active == 'profile' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{% url 'profile' %}" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
+                    <i class="fa fa-user"></i>پروفایل کاربری</a>
+                <a {% if active == 'books' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{% url 'profile-books' %}" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
+                    <i class=" fa fa-th"></i>کتاب های خریداری شده</a>
+                <a {% if active == 'orders' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{% url 'profile-orders' %}" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
+                    <i class="bi bi-cart-fill"></i>فاکتورهای خرید</a>
+                <a {% if active == 'scored' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{% url 'profile-books-scored' %}" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
+                    <i class="bi bi-star-half"></i>کتاب های امتیاز گزاری شده</a>
+                <a {% if active == 'not-scored' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{% url 'profile-books-not-scored' %}" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
+                    <i class="bi bi-star"></i>کتاب های منتظر امتیاز</a>
+                <a {% if active == 'bookmarks' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="#" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
+                    <i class="bi bi-bookmarks"></i>کتاب های نشانه گذاری شده</a>
+            </nav>
+        </div>
+
+        <div class="col-lg-9" dir="ltr">
+{#            <div class="padding-top-2x mt-2 hidden-lg-up"></div>#}
+            {% block profile-content %}
+                <div class="border border-2 rounded h-100 p-3" dir="rtl">
+                    <p>نام کاربری : {{ request.user.username }}</p>
+                    <hr>
+                    <p>ایمیل کاربر : {{ request.user.email }}</p>
+                    <hr>
+                    <P>موجودی کیف پول : {{ request.user.credit }}</P>
+                    <hr>
+                    <p>برای تکمیل پروفایل کاربری منتظر آپدیت های بعدی باشید !!!!</p>
+                </div>
+            {% endblock %}
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

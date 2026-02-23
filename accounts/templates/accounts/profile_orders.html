@@ -1,0 +1,30 @@
+{% extends 'accounts/profile.html' %}
+{% load static %}
+
+{% block style %}
+/* targets only profile list-groups so it don't affect other pages */
+.col-lg-9 .list-group {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.col-lg-9 .list-group .list-group-item {
+  width: 100% !important;
+  display: block !important;
+}
+{% endblock %}
+
+{% block profile-content %}
+<div class="list-group bnazaninBold" dir="rtl">
+    {% for order in orders %}
+        <a href="{% url 'profile-order-items' order_id=order.pk%}" class="list-group-item list-group-item-action mb-1" aria-current="true">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1 ">شماره فاکتور : {{ order.pk }}</h5>
+              <small>{{ order.updated_at }}</small>
+            </div>
+            <p class="mb-1">تعداد آیتم های فاکتور : {{ order.len_items }}</p>
+            <small>مبلغ کل : {{ order.total }}</small>
+          </a>
+    {% endfor %}
+</div>
+{% endblock %}

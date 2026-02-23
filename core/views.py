@@ -271,6 +271,18 @@ class BookScoreView(LoginRequiredMixin, View):
         messages.success(request,'امتیاز شما با موفقیت ثبت گردید')
         return redirect('book_detail',book_id=book_id)
 
+class Book_wishlist_cbv(LoginRequiredMixin, View):
+    """
+    Allows user to bookmark the book\n
+    - user has to be logged in
+    """
+    def post(self,request,book_id):
+        book = get_object_or_404(Book,pk=book_id)
+
+        # ======================= Validating to make sure user can't bookmark owned books =======================
+        bought= Book.objects.get()
+
+
 
 class NavbarView(LoginRequiredMixin, UserPassesTestMixin,View):
     """
@@ -322,6 +334,14 @@ class NavbarView(LoginRequiredMixin, UserPassesTestMixin,View):
 
 @login_required
 def download_book(request,book_id):
+    """
+    Allows the download of the book if purchased\n
+    - user has to be logged in
+    - user have to own the book
+    :param request:
+    :param book_id:
+    :return:
+    """
     book = get_object_or_404(Book,pk=book_id)
 
     owned = OrderItems.objects.filter(order__user=request.user, order__status=StatusChoices.PAID, book=book).exists()

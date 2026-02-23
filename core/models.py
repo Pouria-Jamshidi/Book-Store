@@ -69,6 +69,19 @@ class Score(models.Model):
     def __str__(self):
         return f'{self.book.title}, {self.user.username} = {self.score}'
 
+class Wishlist(models.Model):
+    book = models.ForeignKey(to=Book, on_delete=models.CASCADE, related_name='wishlist', verbose_name='کتاب')
+    user = models.ForeignKey(to='accounts.User', on_delete=models.CASCADE, related_name='wishlist', verbose_name='کاربر')
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name='تاریخ اصافه شدن')
+
+    class Meta:
+        verbose_name = 'لیست آرزوها'
+        verbose_name_plural = 'لیست آرزوها'
+        unique_together = ('book', 'user')
+
+    def __str__(self):
+        return f'{self.book.title}, {self.user.username}'
+
 class NavbarGenre(models.Model):
     position = models.PositiveSmallIntegerField(verbose_name='اولویت ژانرا')
     genre = OneToOneField(to=Genre,on_delete=models.CASCADE,null=True , blank=True, verbose_name= 'اسم ژانرا')

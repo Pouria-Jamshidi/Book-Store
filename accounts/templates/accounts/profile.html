@@ -45,8 +45,8 @@
                     <i class="bi bi-star-half"></i>کتاب های امتیاز گزاری شده</a>
                 <a {% if active == 'not-scored' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{% url 'profile-books-not-scored' %}" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
                     <i class="bi bi-star"></i>کتاب های منتظر امتیاز</a>
-                <a {% if active == 'bookmarks' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="#" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
-                    <i class="bi bi-bookmarks"></i>کتاب های نشانه گذاری شده</a>
+                <a {% if active == 'wishlist' %}class="list-group-item active" {% else %} class="list-group-item" {% endif %} href="{% url 'profile-books-wishlist' %}" style="font-family: 'B Nazanin Bold', Arial, sans-serif; font-size: 1.25em">
+                    <i class="bi bi-bookmarks"></i>لیست آرزوها</a>
             </nav>
         </div>
 

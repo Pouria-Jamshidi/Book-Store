@@ -104,6 +104,32 @@ def profile_books_fbv(request):
     return render(request,'accounts/profile_books.html',context)
 
 @login_required
+def profile_books_wishlist_fbv(request):
+
+    wishlisted_books = Book.objects.filter(wishlist__user=request.user).order_by('-created_at')
+
+    # ======================== Adding pagination ==========================
+    p=Paginator(wishlisted_books,8)
+    page = request.GET.get('page')
+    books = p.get_page(page)
+    # ======================== for page surfing ===========================
+    current_page = books.number
+    total_pages = p.num_pages
+    next_pages = [i for i in range(current_page + 1, min(current_page + 5, total_pages) + 1)]  # min prevents numbers above max page
+    previous_pages = [i for i in range(max(current_page - 5, 1), current_page)]  # max prevents numbers below 1
+    # =====================================================================
+
+    context = {
+        'books': books,
+        'current_page': current_page,
+        'total_pages': total_pages,
+        'next_pages': next_pages,
+        'previous_pages': previous_pages,
+        'active': 'wishlist'
+    }
+    return render(request,'accounts/profile_books.html',context)
+
+@login_required
 def profile_scored_books_fbv(request):
 
     # ===================== User score for the book =======================
@@ -172,7 +198,6 @@ def profile_not_scored_books_fbv(request):
 
 @login_required
 def profile_orders_fbv(request):
-
 
     orders=Order.objects.filter(user=request.user,status=StatusChoices.PAID).annotate(len_items =Sum("items__quantity")).order_by('-updated_at')
     # =====================================================================

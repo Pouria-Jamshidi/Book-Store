@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
 from django.core.paginator import Paginator
-from core.models import Book, Score, NavbarGenre
+from core.models import Book, Score, NavbarGenre, Wishlist
 from sales.models import Order, OrderItems, StatusChoices
 from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm
 
@@ -115,6 +115,7 @@ def book_detail(request,book_id):
     :return:
     """
     book = get_object_or_404(Book,pk=book_id)
+    wishlisted = Wishlist.objects.filter(user=request.user,book=book).exists()
 
     # ================================= Check to see if user has already purchased , show download ======================================
     if request.user.is_authenticated:
@@ -150,7 +151,7 @@ def book_detail(request,book_id):
     # return render(request,'core/book_detail.html',{'book':book,'vote_count':vote_count})
     # # ===========================================================================================
 
-    context = {'book':book, 'purchased': already_purchased, 'in_cart':in_cart()}
+    context = {'book':book, 'purchased': already_purchased, 'in_cart':in_cart(), 'wishlisted':wishlisted}
 
     return render(request,'core/book_detail.html', context)
 
@@ -280,7 +281,22 @@ class Book_wishlist_cbv(LoginRequiredMixin, View):
         book = get_object_or_404(Book,pk=book_id)
 
         # ======================= Validating to make sure user can't bookmark owned books =======================
-        bought= Book.objects.get()
+        bought= Order.objects.filter(user=request.user,status=StatusChoices.PAID,items__book=book).exists()
+
+        if bought:
+            messages.warning(request,"این کتاب قبلا خریداری شده و دلیلی برای اضافه شدن آن به لیست آرزوها وجود ندارد.")
+            return redirect('book_detail',book_id=book_id)
+        else:
+            wishlist, new = Wishlist.objects.get_or_create(user=request.user, book=book)
+
+            if not new:
+                wishlist.delete()
+                messages.success(request,"کتاب {} با موفقیت از لیست آرزوها حذف شد.".format(book.title))
+
+            else:
+                messages.success(request, "کتاب {} با موفقیت به لیست آرزوها اضافه شد.".format(book.title))
+
+            return redirect('book_detail',book_id=book_id)
 
 
 

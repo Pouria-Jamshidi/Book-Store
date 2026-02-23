@@ -12,7 +12,24 @@
     </div>
     <div class="col-8" style="display: flex; flex-direction: column">
         <div class="card-body p-2" style="flex:85 ;display: flex; flex-direction: column;">
-            <div style="flex:10; font-size: 2.5dvmax" class="d-flex align-items-center">{{ book.title }}</div>
+            <div class="d-flex justify-content-between">
+                <span style="flex:10; font-size: 2.5dvmax" class="d-flex align-items-center">{{ book.title }}</span>
+
+                {% if not purchased %}
+                {% if not wishlisted %}
+                    <form action="{% url 'book_wishlist' book_id=book.id %}", method="post">
+                    {% csrf_token %}
+                    <span class="ms-3 mt-3"><button type="submit" class="btn p-0 border-0 bg-transparent"><i class="bi bi-bookmark-star fs-1"></i></button></span>
+                    </form>
+                {% else %}
+                    <form action="{% url 'book_wishlist' book_id=book.id %}", method="post">
+                    {% csrf_token %}
+                    <span class="ms-3 mt-3"><button type="submit" class="btn p-0 border-0 bg-transparent"><i class="bi bi-bookmark-star-fill fs-1"></i></button></span>
+                    </form>
+                {% endif %}
+                {% endif %}
+
+            </div>
             <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">
                 <a href="{% url 'home_author' author_id=book.author.id %}" style="text-decoration-line: none; color: inherit" title="کتاب های {{ book.author }}">نویسنده : {{ book.author }}</a>
             </div>

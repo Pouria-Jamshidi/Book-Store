@@ -2,7 +2,9 @@
 {% load static %}
 
 {% block profile-content %}
+
 <div class="border border-2 rounded h-100 p-3" dir="rtl">
+{% if books %}
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for book in books %}
         <div class="col-lg-3 col-md-4 col-sm-6 col-6 bnazaninBold">
@@ -19,7 +21,7 @@
                     <p class="card-text">
                         <small class="text-body-secondary">
                             <span style="margin-left: 2ch">امتیاز کتاب : </span>
-{#                                        <span style="margin-left: 1ch">({{ book.score_average }}/5)</span>#}
+{#                            <span style="margin-left: 1ch">({{ book.score_average }}/5)</span>#}
                             <span dir="ltr">
                                 {% for i in '12345'|make_list %}
                                 {% if i|floatformat <= book.score_average|floatformat %}
@@ -105,5 +107,12 @@
       </ul>
     </nav>
 </div>
+{% else %}
+<div class="row mt-4 p-1 d-flex justify-content-center">
+    <div class="col-sm-4 border border-2 p-3 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
+        <p class="bnazaninBold d-flex justify-content-center m-2">کتابی وجود ندارد</p>
+    </div>
+</div>
+{% endif %}
 </div>
 {% endblock %}

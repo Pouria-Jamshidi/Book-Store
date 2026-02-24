@@ -15,6 +15,7 @@
 {% endblock %}
 
 {% block profile-content %}
+{% if orders %}
 <div class="list-group bnazaninBold" dir="rtl">
     {% for order in orders %}
         <a href="{% url 'profile-order-items' order_id=order.pk%}" class="list-group-item list-group-item-action mb-1" aria-current="true">
@@ -26,5 +27,80 @@
             <small>مبلغ کل : {{ order.total }}</small>
           </a>
     {% endfor %}
+
+<!-- ===================================== Page navigations ===================================== -->
+<div class="mt-5 bnazaninBold" dir="ltr" style="direction: ltr">
+    <nav aria-label="page navigation">
+      <ul class="pagination pagination-lg justify-content-center">
+
+        {% if books.has_previous %}
+            <!-- first page and previous page -->
+            <li class="page-item">
+              <a href="?page=1" class="page-link">صفحه اول</a>
+            </li>
+            <li class="page-item">
+              <a href="?page={{ books.previous_page_number }}" class="page-link">قبلی</a>
+            </li>
+
+        {% else %}
+            <!-- first page and previous page -->
+            <li class="page-item disabled">
+              <span class="page-link">صفحه اول</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">قبلی</span>
+            </li>
+        {% endif %}
+
+        <!-- up to 5 previous pages if they exist -->
+        {% for i in previous_pages %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+          </li>
+        {% endfor %}
+
+        <!-- current page -->
+        <li class="page-item active"><span class="page-link" style="cursor: pointer">{{ current_page }}</span></li>
+
+        <!-- up to 5 more pages ahead if they exist -->
+        {% for i in next_pages %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+            </li>
+        {% endfor %}
+
+        {% if books.has_next %}
+            <!-- next page and last page -->
+            <li class="page-item">
+              <a class="page-link" href="?page={{ books.next_page_number }}">بعدی</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ total_pages }}">صفحه آخر</a>
+            </li>
+
+        {% else %}
+            <!-- next page and last page -->
+            <li class="page-item disabled">
+              <span class="page-link">بعدی</span>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">صفحه آخر</span>
+            </li>
+        {% endif %}
+
+
+      </ul>
+    </nav>
 </div>
+
+</div>
+{% else %}
+<div class="border border-2 rounded h-100 p-3" dir="rtl">
+<div class="row mt-4 p-1 d-flex justify-content-center">
+    <div class="col-sm-4 border border-2 p-3 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
+        <p class="bnazaninBold d-flex justify-content-center m-2">خرید قبلی وجود ندارد</p>
+    </div>
+</div>
+</div>
+{% endif %}
 {% endblock %}

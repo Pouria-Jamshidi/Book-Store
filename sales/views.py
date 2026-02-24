@@ -9,7 +9,7 @@ from django.views import View
 from django.db import transaction
 from django.db.models import Value, F, Sum, ExpressionWrapper, DecimalField
 from django.db.models.functions import Greatest
-from core.models import Book
+from core.models import Book, Wishlist
 from sales.models import Order,OrderItems,StatusChoices
 from sales.services import update_cart_cache
 from sales.forms import Increase_user_credit, PaymentForm
@@ -205,6 +205,7 @@ class Temp_purchase(LoginRequiredMixin, View): # This is called temporary becaus
         order = Order.objects.select_for_update().filter(user=request.user, status=StatusChoices.PENDING).first()
         user = User.objects.select_for_update().get(pk=request.user.pk)
 
+
         # =============== Checking to see if a cart exists or not ===============
         if not order:
             messages.warning(request, "سفارش پیدا نشد.")
@@ -216,7 +217,6 @@ class Temp_purchase(LoginRequiredMixin, View): # This is called temporary becaus
         context = {'order': order, 'form': form, 'remain': remain}
 
         if form.is_valid():
-
             use_credit = form.cleaned_data.get('use_credit')
             if use_credit:
                 User.objects.filter(pk=request.user.pk).update(credit=Greatest(F('credit') - Value(order.total),Value(0)))
@@ -227,6 +227,10 @@ class Temp_purchase(LoginRequiredMixin, View): # This is called temporary becaus
 
             Order.objects.filter(pk=order.pk).update(status=StatusChoices.PAID)
 
+            # =========================================== Delete purchased books from wishlist ===========================================
+            Wishlist.objects.filter(user=request.user, book__in=order.items.values_list('book_id', flat=True)).delete()
+            # ============================================================================================================================
+
             # ========================================== updating the number of items in cart ============================================
             update_cart_cache(request)
             # ============================================================================================================================
@@ -235,7 +239,6 @@ class Temp_purchase(LoginRequiredMixin, View): # This is called temporary becaus
 
             return redirect('home')
         return render(request, 'sales/payment.html', context)
-
 
 
 

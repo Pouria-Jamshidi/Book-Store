@@ -43,25 +43,9 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                   <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                      <a {% if request.resolver_match.url_name == 'home' %} class="nav-link active bnazaninBold" aria-current="page" {% else %} class="nav-link bnazaninBold" {% endif %} href="{% url 'home' %}">صفحه اصلی</a>
+                      <a {% if request.resolver_match.url_name == 'home' %} class="nav-link active bnazaninBold border-start" aria-current="page" {% else %} class="nav-link bnazaninBold" {% endif %} href="{% url 'home' %}">صفحه اصلی</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
-                      </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                      </ul>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                    </li>
+
                   </ul>
                   <ul class="nav navbar-nav navbar-right">
                   {% if user.is_authenticated %}
@@ -138,18 +122,48 @@
     <!-- ======================== body/footer ======================== -->
     <footer>
         {% block footer %}
-            <div style="height: 200px; background-color: rgba(72,121,149,0.76); display: flex ">
-            <div style="flex:1;">
-                <div style="padding: 3%">
-
+            <div class="bnazaninBold" style="background-color: rgba(72,121,149,0.76);color: white; display: flex" dir="rtl">
+                <div style="flex:1;">
+                    <div style="padding: 5%">
+                        <h4>بهشت کتاب آنلاین :</h4>
+                        <ul style="list-style-type: none; margin-top: 1.25em">
+                            <li style="font-size: 1.25em">درباره ما</li>
+                            <li style="font-size: 1.25em">راهنمای خرید و دانلود</li>
+                            <li style="font-size: 1.25em">قوانین و مقررات</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div style="flex:1; border-left:thin solid rgba(27,52,64,0.3);border-right:thin solid rgba(27,52,64,0.3)">
 
-            </div>
-            <div style="flex:1;">
+                <div style="flex:1; border-left:thin solid rgba(27,52,64,0.3);border-right:thin solid rgba(27,52,64,0.3)">
+                    <div style="padding: 5%">
+                        <h4>پشتیبانی :</h4>
+                        <ul style="list-style-type: none; margin-top: 1.25em">
+                            <li style="font-size: 1.25em">تماس با ما</li>
+                            <li style="font-size: 1.25em">ثبت تیکت</li>
+                            <li style="font-size: 1.25em">همکاری در فروش کتاب شما</li>
+                        </ul>
+                    </div>
+                </div>
 
-            </div>
+                <div style="flex:1;">
+                    <div style="padding: 5%">
+                                                <div class="row gx-3 mt-2 d-flex justify-content-start ms-4 me-4">
+                            <div class="col-6 text-wrap">
+                                <h4>آدرس :</h4>
+                                <p>شهر مورد نظر ، خیابان مورد نظر ، خیابان مورد نظر ، جنب مغازه مورد نظر ، پلاک مورد نظر</p>
+                            </div>
+                            <div class="col-6">
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d706.4445397025485!2d51.667606729721186!3d32.6212243341784!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3fbc4b0018553f51%3A0x6912ddeba87a26f7!2za2Fyb2NhbXB82KLZhdmI2LLYtNqv2KfZhyDYqNix2YbYp9mF2Ycg2YbZiNuM2LPbjCDaqdin2LHZiNqp2YXZvg!5e0!3m2!1sen!2sus!4v1771937787363!5m2!1sen!2sus"
+{#                                        width="600" #}
+{#                                        height="450" #}
+                                        style="border:0;"
+                                        allowfullscreen=""
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endblock %}
     </footer>

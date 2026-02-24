@@ -5,7 +5,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import redirect_to_login
 from django.core.paginator import Paginator
 from core.models import Book, Score, NavbarGenre, Wishlist
 from sales.models import Order, OrderItems, StatusChoices
@@ -182,15 +181,11 @@ class NewBook(LoginRequiredMixin, UserPassesTestMixin,View):
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
             messages.warning(self.request, 'شما اجازه ورود به این صفحه را ندارید')
-            # Redirect back to previous page safely
-            return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
+            return redirect('home')
 
         messages.warning(self.request,'ابتدا وارد شوید')
-        return redirect_to_login(
-            self.request.get_full_path(),
-            self.get_login_url(),
-            self.get_redirect_field_name(),
-        )
+        return super().handle_no_permission()
 
 class NewAuthorView(LoginRequiredMixin, UserPassesTestMixin,View):
     """
@@ -215,14 +210,11 @@ class NewAuthorView(LoginRequiredMixin, UserPassesTestMixin,View):
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
             messages.warning(self.request, 'شما اجازه ورود به این صفحه را ندارید')
-            return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
+            return redirect('home')
 
         messages.warning(self.request, 'ابتدا وارد شوید')
-        return redirect_to_login(
-            self.request.get_full_path(),
-            self.get_login_url(),
-            self.get_redirect_field_name(),
-        )
+        return super().handle_no_permission()
 
 class NewGenreView(LoginRequiredMixin, UserPassesTestMixin,View):
     """
@@ -248,14 +240,11 @@ class NewGenreView(LoginRequiredMixin, UserPassesTestMixin,View):
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
             messages.warning(self.request, 'شما اجازه ورود به این صفحه را ندارید')
-            return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
+            return redirect('home')
 
         messages.warning(self.request, 'ابتدا وارد شوید')
-        return redirect_to_login(
-            self.request.get_full_path(),
-            self.get_login_url(),
-            self.get_redirect_field_name(),
-        )
+        return super().handle_no_permission()
 
 class BookScoreView(LoginRequiredMixin, View):
     """
@@ -312,14 +301,11 @@ class NavbarView(LoginRequiredMixin, UserPassesTestMixin,View):
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
             messages.warning(self.request, 'شما اجازه ورود به این صفحه را ندارید')
-            return redirect(self.request.META.get('HTTP_REFERER', '/'))
+            # Redirect back to previous page safely
+            return redirect('home')
 
         messages.warning(self.request, 'ابتدا وارد شوید')
-        return redirect_to_login(
-            self.request.get_full_path(),
-            self.get_login_url(),
-            self.get_redirect_field_name(),
-        )
+        return super().handle_no_permission()
 
     def get_initial_from_db(self):
         """

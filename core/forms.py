@@ -1,9 +1,9 @@
 from email.policy import default
 
 from django import forms
-from core.models import Book, Author, Genre, NavbarGenre
+from core.models import Book, Author, Genre
 from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
+from django.core.validators import FileExtensionValidator
 
 
 class NewBookForm(forms.ModelForm):
@@ -96,3 +96,19 @@ class NavbarForm(forms.Form):
             )
 
         return cleaned
+
+
+
+
+class Sort_Filter_Form(forms.Form):
+    choices = [('name','اسم کتاب (صعودی)'),
+               ('-name','اسم کتاب (نزولی)'),
+               ('price','قیمت (ارزان ترین)'),
+               ('-price','قیمت (گران ترین)'),
+               ('-created_at', 'زمان اضافه شدن (جدیدترین)'),
+               ('created_at','زمان اضافه شدن (قدیمی ترین)'),
+               ('-score', 'امتیاز کتاب (بیشترین به کمترین)'),
+               ('score','امتیاز کتاب (کمترین به بیشترین)'),
+                              ]
+    sort = forms.ChoiceField(choices=choices, label='مرتب سازی بر اساس ', required=False, widget=forms.Select(attrs={'class': 'form-select'}))
+    only_unowned = forms.BooleanField(required= False, label='تنها کتاب های خریداری نشده ', widget=forms.CheckboxInput(attrs={'class':'btn-check ms-4','autocomplete':'off'}))

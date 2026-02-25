@@ -8,7 +8,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from core.models import Book, Score, NavbarGenre, Wishlist
 from sales.models import Order, OrderItems, StatusChoices
-from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm
+from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm, Sort_Filter_Form
+from utility.utils import apply_sort_and_filter
 
 
 def home(request):
@@ -17,8 +18,15 @@ def home(request):
     :param request:
     :return:
     """
+    # ========================== Form Instance ===========================
+    form = Sort_Filter_Form(request.GET or None)
+
+    # ========================== Sort and Filter form =====================
+    books = Book.objects.all()
+    books = apply_sort_and_filter(request, books, form)
+
     # ======================== Adding pagination ==========================
-    p = Paginator(Book.objects.all(), 12)
+    p = Paginator(books, 12)
     page = request.GET.get('page')
     books = p.get_page(page)
     # ======================== for page surfing ===========================
@@ -28,8 +36,12 @@ def home(request):
     previous_pages = [i for i in range(max(current_page - 5, 1), current_page)]  # max prevents numbers below 1
     # =====================================================================
 
+
+
+
     context = {
         'books': books,
+        'form':form,
         'navbar_items': NavbarGenre.objects.all(),
         'active_genre': None,
         'current_page': current_page,
@@ -48,8 +60,15 @@ def home_genre(request,genre_id):
     :return:
     """
 
+    # ========================== Form Instance ===========================
+    form = Sort_Filter_Form(request.GET or None)
+
+    # ========================== Sort and Filter form =====================
+    books = Book.objects.filter(genre= genre_id)
+    books = apply_sort_and_filter(request, books, form)
+
     # ======================== Adding pagination ==========================
-    p = Paginator(Book.objects.filter(genre= genre_id), 12)
+    p = Paginator(books, 12)
     page = request.GET.get('page')
     books = p.get_page(page)
     # ======================== for page surfing ===========================
@@ -61,6 +80,7 @@ def home_genre(request,genre_id):
 
     context = {
         'books': books,
+        'form':form,
         'navbar_items': NavbarGenre.objects.all(),
         'active_genre': genre_id,
         'current_page': current_page,
@@ -78,9 +98,15 @@ def home_author(request,author_id):
     :param author_id: ID of the desired author
     :return:
     """
+    # ========================== Form Instance ===========================
+    form = Sort_Filter_Form(request.GET or None)
+
+    # ========================== Sort and Filter form =====================
+    books = Book.objects.filter(author= author_id)
+    books = apply_sort_and_filter(request, books, form)
 
     # ======================== Adding pagination ==========================
-    p = Paginator(Book.objects.filter(author= author_id), 12)
+    p = Paginator(books, 12)
     page = request.GET.get('page')
     books = p.get_page(page)
     # ======================== for page surfing ===========================
@@ -92,6 +118,7 @@ def home_author(request,author_id):
 
     context = {
         'books': books,
+        'form':form,
         'navbar_items': NavbarGenre.objects.all(),
         'active_genre': None,
         'current_page': current_page,

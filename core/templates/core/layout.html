@@ -43,7 +43,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                   <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                      <a {% if request.resolver_match.url_name == 'home' %} class="nav-link active bnazaninBold border-start" aria-current="page" {% else %} class="nav-link bnazaninBold" {% endif %} href="{% url 'home' %}">صفحه اصلی</a>
+                      <a {% if request.resolver_match.url_name == 'home' %} class="nav-link active bnazaninBold rounded" aria-current="page" style="background-color: rgba(202,252,255,0.94)" {% else %} class="nav-link bnazaninBold rounded" {% endif %} href="{% url 'home' %}">صفحه اصلی</a>
                     </li>
 
                   </ul>

@@ -4,6 +4,7 @@
 خانه
 {% endblock %}
 
+<!-- ================================================= Genre navigation bar ================================================= -->
 {% block home-nav %}
     <nav class="navbar navbar-expand-lg" style="background-color: rgba(95,67,201,0.65);" data-bs-theme="dark">
       <div class="container-fluid">
@@ -26,16 +27,48 @@
       </div>
     </nav>
 {% endblock %}
+<!-- ================================================= End Of : Genre navigation bar ================================================= -->
 
 {% block main %}
 
     <div class="row gx-1 mt-2 d-flex justify-content-start ms-4 me-4">
+
+
+        <!-- ==================================== Sorting and Filtering Form ==================================== -->
+        <div>
+            <form method="get" class="bnazaninBold my-3 d-flex align-items-center flex-wrap gap-2">
+                {% for field in form %}
+                    {% if field.name == 'sort' %}
+                        <div class="input-group ms-2 w-auto" dir="ltr">
+                            {{ field }}<label class="input-group-text" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                    {% elif field.name == 'only_unowned' %}
+                        {{ field }}
+
+                        <label class="btn btn-outline-primary"
+                               for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+                    {% endif %}
+                {% endfor %}
+
+                <input type="submit" class="btn btn-success mx-3" value="اعمال">
+                <a href="?" class="btn btn-danger">حذف فیلتر ها</a>
+
+            </form>
+        <hr>
+        </div>
+        <!-- ==================================== End Of : Sorting and Filtering Form ==================================== -->
+
+        <!-- ==================================== Which Books (ID) Are Being Shown In Page ==================================== -->
         <div>
             <p class="bnazaninBold"
                style="margin-top: 0.5em;margin-bottom: 0.5em;margin-right: 1.5em;font-size: 1.5em">
                 کتاب های شماره  {{ books.start_index }} تا {{ books.end_index }} از {{ books.paginator.count }} کتاب
             </p>
         </div>
+        <!-- ================================ End Of : Which Books (ID) Are Being Shown In Page ================================ -->
+
         {% if not books %}
             <div class="row mt-4 p-1 d-flex justify-content-center">
                 <div class="col-sm-4 border border-2 p-3 rounded-5" style="background-color: rgba(193, 245, 238, 0.2)">
@@ -44,6 +77,7 @@
             </div>
 
         {% else %}
+
 
         {% for book in books %}
         <div class="col-lg-3 col-md-4 col-sm-6 col-6 bnazaninBold">
@@ -56,6 +90,22 @@
                   <div class="card-body">
                     <h4 class="card-title">{{ book.title }}</h4>
                     <h6 class="card-title">نویسنده : {{ book.author }}</h6>
+                    <hr>
+                    <p class="card-text">
+                        <small class="text-body-secondary">
+                            <span style="margin-left: 2ch">امتیاز کتاب : </span>
+{#                            <span style="margin-left: 1ch">({{ book.score_average }}/5)</span>#}
+                            <span dir="ltr">
+                                {% for i in '12345'|make_list %}
+                                {% if i|floatformat <= book.score_average|floatformat %}
+                                ⭐
+                                {% else %}
+                                ☆
+                                {% endif %}
+                                {% endfor %}
+                            </span>
+                        </small>
+                    </p>
                     <hr>
                     <p class="card-text"><small class="text-body-secondary">قیمت : {{ book.price|floatformat:0|intcomma }} تومان</small></p>
 
@@ -78,10 +128,10 @@
             {% if books.has_previous %}
                 <!-- first page and previous page -->
                 <li class="page-item">
-                  <a href="?page=1" class="page-link">صفحه اول</a>
+                  <a href="?page=1{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.only_unowned %}&only_unowned={{ request.GET.only_unowned }}{% endif %}" class="page-link">صفحه اول</a>
                 </li>
                 <li class="page-item">
-                  <a href="?page={{ books.previous_page_number }}" class="page-link">قبلی</a>
+                  <a href="?page={{ books.previous_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.only_unowned %}&only_unowned={{ request.GET.only_unowned }}{% endif %}" class="page-link">قبلی</a>
                 </li>
 
             {% else %}
@@ -97,7 +147,7 @@
             <!-- up to 5 previous pages if they exist -->
             {% for i in previous_pages %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+                <a class="page-link" href="?page={{ i }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.only_unowned %}&only_unowned={{ request.GET.only_unowned }}{% endif %}" aria-current="page">{{ i }}</a>
               </li>
             {% endfor %}
 
@@ -107,17 +157,17 @@
             <!-- up to 5 more pages ahead if they exist -->
             {% for i in next_pages %}
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ i }}" aria-current="page">{{ i }}</a>
+                  <a class="page-link" href="?page={{ i }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.only_unowned %}&only_unowned={{ request.GET.only_unowned }}{% endif %}" aria-current="page">{{ i }}</a>
                 </li>
             {% endfor %}
 
             {% if books.has_next %}
                 <!-- next page and last page -->
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ books.next_page_number }}">بعدی</a>
+                  <a class="page-link" href="?page={{ books.next_page_number }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.only_unowned %}&only_unowned={{ request.GET.only_unowned }}{% endif %}">بعدی</a>
                 </li>
                 <li class="page-item">
-                  <a class="page-link" href="?page={{ total_pages }}">صفحه آخر</a>
+                  <a class="page-link" href="?page={{ total_pages }}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.only_unowned %}&only_unowned={{ request.GET.only_unowned }}{% endif %}">صفحه آخر</a>
                 </li>
 
             {% else %}

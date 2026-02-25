@@ -16,33 +16,35 @@ def apply_sort_and_filter(request, queryset, form):
     # ======================= SORTING ========================
     sort = request.GET.get("sort")
 
-    if sort == "name":
-        queryset = queryset.order_by("title")
+    if sort:
 
-    elif sort == "-name":
-        queryset = queryset.order_by("-title")
+        if sort == "name":
+            queryset = queryset.order_by("title")
 
-    elif sort == "price":
-        queryset = queryset.order_by("price")
+        elif sort == "-name":
+            queryset = queryset.order_by("-title")
 
-    elif sort == "-price":
-        queryset = queryset.order_by("-price")
+        elif sort == "price":
+            queryset = queryset.order_by("price")
 
-    elif sort == "created_at":
-        queryset = queryset.order_by("created_at")
+        elif sort == "-price":
+            queryset = queryset.order_by("-price")
 
-    elif sort == "-created_at":
-        queryset = queryset.order_by("-created_at")
+        elif sort == "created_at":
+            queryset = queryset.order_by("created_at")
 
-    elif sort == "score":
-        queryset = queryset.annotate(
-            avg_score=Avg("scores__score")
-        ).order_by("avg_score")
+        elif sort == "-created_at":
+            queryset = queryset.order_by("-created_at")
 
-    elif sort == "-score":
-        queryset = queryset.annotate(
-            avg_score=Avg("scores__score")
-        ).order_by("-avg_score")
+        elif sort == "score":
+            queryset = queryset.annotate(
+                avg_score=Avg("scores__score")
+            ).order_by("avg_score")
+
+        elif sort == "-score":
+            queryset = queryset.annotate(
+                avg_score=Avg("scores__score")
+            ).order_by("-avg_score")
 
 
     # ================= OWNERSHIP FILTER =================

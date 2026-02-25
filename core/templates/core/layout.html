@@ -93,9 +93,14 @@
                     <li><a href="{% url 'login' %}" class="btn btn-info bnazaninBold"><span class="bi bi-person-circle"></span>  ورود</a></li>
                   {% endif %}
                   </ul>
-                  <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
+
+                  <!-- ================================ Search Bar ================================ -->
+                  <form class="d-flex me-3 ms-5" style="font-family: 'B Nazanin Bold', Arial, sans-serif" method="get" dir="ltr" action="{% url 'search_result' %}">
+                      <div class="input-group">
+                          <button type="submit" class="btn btn-outline-success">جست و جو</button>
+                          {{ navbar_search_form.search_by }}
+                          {{ navbar_search_form.search }}
+                      </div>
                   </form>
                 </div>
               </div>

@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from core.models import Book, Score, NavbarGenre, Wishlist
 from sales.models import Order, OrderItems, StatusChoices
-from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm, Sort_Filter_Form
+from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm, Sort_Filter_Form, Searchbar
 from utility.utils import apply_sort_and_filter
 
 
@@ -128,6 +128,58 @@ def home_author(request,author_id):
     }
 
     return render(request,'core/home.html',context)
+
+def search_result_fbv(request):
+    # ========================== Form Instance ===========================
+    SaF_form = Sort_Filter_Form(request.GET or None)
+    Sb_form = Searchbar(request.GET or None)
+
+    # ================================ Applying filter ================================
+
+    if Sb_form.is_valid():
+        search = Sb_form.cleaned_data.get('search')
+        search_by = Sb_form.cleaned_data.get('search_by')
+
+        if search_by == 'title':
+            books = Book.objects.filter(title__icontains=search)
+        elif search_by == 'genre':
+            books = Book.objects.filter(genre__name__icontains=search)
+        elif search_by == 'description':
+            books = Book.objects.filter(description__icontains=search)
+        elif search_by == 'author':
+            books = Book.objects.filter(author__name__icontains=search)
+
+        # ================================ Applying Sort and Filter ================================
+        books = apply_sort_and_filter(request,books,SaF_form)
+
+        # ======================== Adding pagination ==========================
+        p = Paginator(books, 12)
+        page = request.GET.get('page')
+        books = p.get_page(page)
+        # ======================== for page surfing ===========================
+        current_page = books.number
+        total_pages = p.num_pages
+        next_pages = [i for i in range(current_page + 1,
+                                       min(current_page + 5, total_pages) + 1)]  # min prevents numbers above max page
+        previous_pages = [i for i in range(max(current_page - 5, 1), current_page)]  # max prevents numbers below 1
+        # =====================================================================
+
+        context = {
+            'books': books,
+            'form': SaF_form,
+            'navbar_items': NavbarGenre.objects.all(),
+            'active_genre': None,
+            'current_page': current_page,
+            'total_pages': total_pages,
+            'next_pages': next_pages,
+            'previous_pages': previous_pages,
+        }
+
+        return render(request, 'core/home.html', context)
+
+
+    messages.warning(request,'در انجام جست و جوی شما مشکلی پیش آمد. لطفا بعدا تلاش کنید یا با پشتیبانی در میان بگزارید')
+    return redirect('home')
 
 def book_detail(request,book_id):
     """

@@ -37,6 +37,15 @@
         <!-- ==================================== Sorting and Filtering Form ==================================== -->
         <div>
             <form method="get" class="bnazaninBold my-3 d-flex align-items-center flex-wrap gap-2">
+
+                {% if request.GET.search %}
+                    <input type="hidden" name="search" value="{{ request.GET.search }}">
+                {% endif %}
+
+                {% if request.GET.search_by %}
+                    <input type="hidden" name="search_by" value="{{ request.GET.search_by }}">
+                {% endif %}
+
                 {% for field in form %}
                     {% if field.name == 'sort' %}
                         <div class="input-group ms-2 w-auto" dir="ltr">
@@ -53,7 +62,16 @@
                 {% endfor %}
 
                 <input type="submit" class="btn btn-success mx-3" value="اعمال">
-                <a href="?" class="btn btn-danger">حذف فیلتر ها</a>
+                {% if request.GET.search %}
+                    <a href="?search={{ request.GET.search }}&search_by={{ request.GET.search_by }}"
+                       class="btn btn-danger">
+                        حذف فیلتر ها
+                    </a>
+                {% else %}
+                    <a href="?" class="btn btn-danger">
+                        حذف فیلتر ها
+                    </a>
+                {% endif %}
 
             </form>
         <hr>

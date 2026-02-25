@@ -101,7 +101,8 @@ class NavbarForm(forms.Form):
 
 
 class Sort_Filter_Form(forms.Form):
-    choices = [('name','اسم کتاب (صعودی)'),
+    choices = [('','بدون مرتب سازی'),
+               ('name','اسم کتاب (صعودی)'),
                ('-name','اسم کتاب (نزولی)'),
                ('price','قیمت (ارزان ترین)'),
                ('-price','قیمت (گران ترین)'),
@@ -110,5 +111,15 @@ class Sort_Filter_Form(forms.Form):
                ('-score', 'امتیاز کتاب (بیشترین به کمترین)'),
                ('score','امتیاز کتاب (کمترین به بیشترین)'),
                               ]
-    sort = forms.ChoiceField(choices=choices, label='مرتب سازی بر اساس ', required=False, widget=forms.Select(attrs={'class': 'form-select'}))
+    sort = forms.ChoiceField(choices=choices, label='مرتب سازی بر اساس ', required=False, widget=forms.Select(attrs={'class': 'form-select text-center'}))
     only_unowned = forms.BooleanField(required= False, label='تنها کتاب های خریداری نشده ', widget=forms.CheckboxInput(attrs={'class':'btn-check ms-4','autocomplete':'off'}))
+
+class Searchbar(forms.Form):
+    choices = [('title','اسم کتاب'),
+               ('genre', 'ژانرا کتاب'),
+               ('description', 'درباره کتاب'),
+               ('author', 'اسم نویسنده'),
+               ]
+
+    search = forms.CharField(max_length=30,required=True,label='جست و جو',widget=forms.SearchInput(attrs={'class': 'form-control', 'placeholder':'جست و جو'}))
+    search_by = forms.ChoiceField(choices=choices, label='جست و جو براساس ', required=True, widget=forms.Select(attrs={'class': 'form-select text-center'}))

@@ -193,10 +193,12 @@ def book_detail(request,book_id):
     :return:
     """
     book = get_object_or_404(Book,pk=book_id)
-    wishlisted = Wishlist.objects.filter(user=request.user,book=book).exists()
+
 
     # ================================= Check to see if user has already purchased , show download ======================================
     if request.user.is_authenticated:
+        # ===================== to check wishlist user has to be authenticated =======================================
+        wishlisted = Wishlist.objects.filter(user=request.user, book=book).exists()
         already_purchased = OrderItems.objects.filter(
             order__user=request.user,
             order__status=StatusChoices.PAID,
@@ -204,6 +206,7 @@ def book_detail(request,book_id):
         ).exists()
     else:
         already_purchased = False
+        wishlisted = False
     # ===================================================================================================================================
 
     # ================================ Check to see if it is in cart , delete if from the cart ==========================================

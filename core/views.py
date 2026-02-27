@@ -1,5 +1,7 @@
 import os
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.db.models import Sum, ExpressionWrapper, F, DecimalField
 from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
@@ -8,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from core.models import Book, Score, NavbarGenre, Wishlist
 from sales.models import Order, OrderItems, StatusChoices
-from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm, Sort_Filter_Form, Searchbar
+from core.forms import NewAuthorForm, NewBookForm, NewGenreForm, NavbarForm, Sort_Filter_Form, Searchbar, EditBookForm
 from utility.utils import apply_sort_and_filter
 
 
@@ -235,6 +237,76 @@ def book_detail(request,book_id):
     context = {'book':book, 'purchased': already_purchased, 'in_cart':in_cart(), 'wishlisted':wishlisted}
 
     return render(request,'core/book_detail.html', context)
+
+class Edit_book_cbv(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    CBV : Renders a page where staff and super users can edit a already existing book.\n
+    - they have a choice to update the price in open carts as well or not.
+    """
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+    def get(self,request,book_id):
+        book = get_object_or_404(Book,pk=book_id)
+        form = EditBookForm(instance=book)
+        return render(request, 'core/edit_book.html',{'form':form,'book':book})
+
+    @transaction.atomic
+    def post(self,request,book_id):
+        book = get_object_or_404(Book, pk=book_id)
+        form = EditBookForm(request.POST, request.FILES, instance=book)
+
+        def recalc_order_totals(orders_queryset):
+            """
+            Recalculate total for a set of Order objects while avoiding n+1 problem.
+
+            :param orders_queryset: QuerySet of Order objects
+            """
+            total_expr = ExpressionWrapper(F('price') * F('quantity'),
+                                           output_field=DecimalField(max_digits=10, decimal_places=0))
+            totals_qs = (
+                OrderItems.objects
+                .filter(order__in=orders_queryset)
+                .values('order')
+                .annotate(total_sum=Sum(total_expr))
+            )
+            totals_map = {item['order']: item['total_sum'] for item in totals_qs}
+
+            orders = list(orders_queryset)
+            for o in orders:
+                o.total = totals_map.get(o.id, 0)
+            from django.db import transaction
+            with transaction.atomic():
+                Order.objects.bulk_update(orders, ['total'])
+
+
+
+        if form.is_valid():
+            # ================== Removing change_cart since it don't exist in our model ====================
+            change_cart = form.cleaned_data.pop('change_cart')
+
+            pending_orders = Order.objects.filter(status=StatusChoices.PENDING)
+
+            form.save()
+
+            if change_cart=='remove_cart':
+                OrderItems.objects.filter(order__in=pending_orders, book=book).delete()
+                # ================================================= re-calculating the total =================================================
+                recalc_order_totals(pending_orders)
+                # ===========================================================================================================================
+                messages.success(request, 'اطلاعات کتاب با موفقیت تغییر کرد و از سبدهای خرید فعال حذف گردید')
+
+            elif change_cart == 'change_cart':
+                OrderItems.objects.filter(order__in=pending_orders, book=book).update(price=book.price)
+                # ================================================= re-calculating the total =================================================
+                recalc_order_totals(pending_orders)
+                # ===========================================================================================================================
+                messages.success(request, 'اطلاعات کتاب و قیمت آن در سبدهای خرید فعال با موفقیت تغییر کرد.')
+            else:
+                messages.success(request,'اطلاعات کتاب با موفقیت تغییر کرد')
+            return redirect('book_detail',book_id=book_id)
+        return render(request, 'core/edit_book.html', {'form': form, 'book': book})
+
 
 
 class NewBook(LoginRequiredMixin, UserPassesTestMixin,View):

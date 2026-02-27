@@ -15,19 +15,26 @@
             <div class="d-flex justify-content-between">
                 <span style="flex:10; font-size: 2.5dvmax" class="d-flex align-items-center">{{ book.title }}</span>
 
+                <div class="d-flex">
+                {% if request.user.is_staff or request.user.is_superuser %}
+                    <a href="{% url 'edit_book' book_id=book.id %}" class="ms-4 mt-1" style="color: inherit" title="Edit Book"><i class="bi bi-pencil-square fs-2"></i></a>
+                {% endif %}
                 {% if not purchased %}
                 {% if not wishlisted %}
+
                     <form action="{% url 'book_wishlist' book_id=book.id %}" method="post">
                     {% csrf_token %}
-                    <span class="ms-3 mt-3"><button type="submit" class="btn p-0 border-0 bg-transparent"><i class="bi bi-bookmark-star fs-1"></i></button></span>
+                    <span class="ms-3 mt-3"><button type="submit" class="btn p-0 border-0 bg-transparent" title="Wishlist"><i class="bi bi-bookmark-star fs-1"></i></button></span>
                     </form>
+
                 {% else %}
                     <form action="{% url 'book_wishlist' book_id=book.id %}" method="post">
                     {% csrf_token %}
-                    <span class="ms-3 mt-3"><button type="submit" class="btn p-0 border-0 bg-transparent"><i class="bi bi-bookmark-star-fill fs-1"></i></button></span>
+                    <span class="ms-3 mt-3"><button type="submit" class="btn p-0 border-0 bg-transparent" title="Wishlist"><i class="bi bi-bookmark-star-fill fs-1"></i></button></span>
                     </form>
                 {% endif %}
                 {% endif %}
+                </div>
 
             </div>
             <div style="flex:10; font-size: 1.5dvmax" class="d-flex align-items-center">

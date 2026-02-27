@@ -1,5 +1,5 @@
 from django.urls import path
-from core.views import home, NewBook, NewAuthorView, NewGenreView, book_detail, BookScoreView, NavbarView, home_genre, home_author, download_book, Book_wishlist_cbv, search_result_fbv
+from core.views import home, NewBook, NewAuthorView, NewGenreView, book_detail, BookScoreView, NavbarView, home_genre, home_author, download_book, Book_wishlist_cbv, search_result_fbv, Edit_book_cbv
 
 urlpatterns = [
     path('', home, name='home'),
@@ -7,6 +7,7 @@ urlpatterns = [
     path('author/<int:author_id>/', home_author, name='home_author'),
     path('search/', search_result_fbv, name='search_result'),
     path('books/newbook/', NewBook.as_view(), name='newbook'),
+    path('book/edit_book/<int:book_id>', Edit_book_cbv.as_view(), name='edit_book'),
     path('author/new/', NewAuthorView.as_view(), name='newauthor'),
     path('genre/new/', NewGenreView.as_view(), name='newgenre'),
     path('book/<int:book_id>/', book_detail, name='book_detail'),

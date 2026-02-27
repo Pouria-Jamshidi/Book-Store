@@ -37,6 +37,51 @@ class NewBookForm(forms.ModelForm):
             raise ValidationError('حجم کاور نباید بیشتر از 5 مگابایت باشد')
         return cover
 
+class EditBookForm(forms.ModelForm):
+    choices = [('no_changes', 'سبدهای خرید بدون تغییر باقی بماند'),
+               ('change_cart', 'مبلغ کتاب در سبدهای خرید باز تغییر کند.'),
+               ('remove_cart', 'کتاب را از سبدهای خرید باز حذف کند.'),
+               ]
+    author = forms.ModelChoiceField(queryset=Author.objects.all(),required=True, widget= forms.Select(attrs={'class':'form-select'}))
+    genre = forms.ModelMultipleChoiceField(queryset=Genre.objects.all(),required=True, widget = forms.SelectMultiple(attrs={'class':'form-select'}))
+    file = forms.FileField(validators=[FileExtensionValidator(['pdf'])],required=True , widget=forms.FileInput(attrs={'class': 'form-control rounded-start rounded-end-0', 'id':'file'}))
+    cover = forms.ImageField(validators=[FileExtensionValidator(['jpg', 'jpeg', 'png'])],required=True, widget=forms.FileInput(attrs={'class': 'form-control rounded-start rounded-end-0', 'id':'cover'}))
+    change_cart = forms.ChoiceField(choices=choices,required=True, widget=forms.RadioSelect(attrs={'class':'form-check-input mt-0'}))
+
+
+    class Meta:
+        model = Book
+        fields = ['title', 'description', 'genre', 'author', 'cover', 'file', 'price', 'change_cart']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control rounded-start rounded-end-0', 'id':'title'}),
+            'description': forms.Textarea(attrs={'class': 'form-control rounded-start rounded-end-0', 'id':'description'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'id':'price'}),
+        }
+
+    # due to `instance=book` in view, we can't add initial in from field, have to do it in __init__
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Set default only if no data is bound
+        if not self.is_bound:
+            self.fields['change_cart'].initial = 'no_changes'
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+
+        if file.size > 50*1024*1024:
+            raise ValidationError('حجم فایل نباید بیشتر از 50 مگابایت باشد')
+
+        return file
+
+    def clean_cover(self):
+        cover = self.cleaned_data.get('cover')
+
+        if cover.size > 5*1024*1024:
+            raise ValidationError('حجم کاور نباید بیشتر از 5 مگابایت باشد')
+        return cover
+
+
 class NewAuthorForm(forms.ModelForm):
     class Meta:
         model = Author
